@@ -1286,10 +1286,16 @@
           );
         }
 
-        const vehicles = await response.json();
+        const result = await response.json();
 
-        renderVehicles(vehicles || []);
-        updateNotificationCount(vehicles || []);
+        if (!result.success) {
+          throw new Error(result.message || "Unable to load vehicles.");
+        }
+
+        const vehicles = result.vehicles || [];
+
+        renderVehicles(vehicles);
+        updateNotificationCount(vehicles);
 
       } catch (err) {
 
