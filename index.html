@@ -49,15 +49,11 @@
     button, input, select, textarea { font: inherit; }
     button { cursor: pointer; }
 
-    /* =========================
-       SPLASH SCREEN (LOADING)
-       ========================= */
+    /* SPLASH OVERLAY */
     #splashScreen {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
       background-color: var(--navy);
       color: #ffffff;
       display: flex;
@@ -68,41 +64,11 @@
       transition: opacity 0.4s ease, visibility 0.4s ease;
     }
 
-    .splash-content {
-      width: 80%;
-      max-width: 280px;
-      text-align: center;
-    }
-
-    .splash-logo {
-      font-size: clamp(24px, 6vw, 32px);
-      font-weight: 700;
-      margin-bottom: 24px;
-      letter-spacing: -0.5px;
-    }
-
-    .progress-bar-bg {
-      width: 100%;
-      height: 8px;
-      background: rgba(255, 255, 255, 0.2);
-      border-radius: 10px;
-      overflow: hidden;
-      margin-bottom: 10px;
-    }
-
-    .progress-bar-fill {
-      width: 0%;
-      height: 100%;
-      background: var(--blue);
-      border-radius: 10px;
-      transition: width 0.1s linear;
-    }
-
-    .progress-text {
-      font-size: clamp(12px, 3vw, 14px);
-      font-weight: 600;
-      color: #94a3b8;
-    }
+    .splash-content { width: 80%; max-width: 280px; text-align: center; }
+    .splash-logo { font-size: clamp(24px, 6vw, 32px); font-weight: 700; margin-bottom: 24px; }
+    .progress-bar-bg { width: 100%; height: 8px; background: rgba(255, 255, 255, 0.2); border-radius: 10px; overflow: hidden; margin-bottom: 10px; }
+    .progress-bar-fill { width: 0%; height: 100%; background: var(--blue); border-radius: 10px; transition: width 0.1s linear; }
+    .progress-text { font-size: clamp(12px, 3vw, 14px); font-weight: 600; color: #94a3b8; }
 
     /* TOP HEADER */
     .app-header {
@@ -129,371 +95,178 @@
     .header-left { display: flex; align-items: center; gap: 12px; }
 
     .menu-btn {
-      width: 28px;
-      height: 24px;
-      padding: 0;
-      border: 0;
-      background: transparent;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
+      width: 28px; height: 24px; padding: 0; border: 0; background: transparent;
+      display: flex; flex-direction: column; justify-content: space-between;
     }
 
-    .menu-btn span {
-      display: block;
-      height: 3px;
-      border-radius: 3px;
-      background: #fff;
-      width: 100%;
-    }
+    .menu-btn span { display: block; height: 3px; border-radius: 3px; background: #fff; width: 100%; }
 
-    .page-title {
-      font-size: clamp(18px, 5vw, 26px);
-      font-weight: 700;
-      letter-spacing: -0.3px;
-    }
+    .page-title { font-size: clamp(18px, 5vw, 26px); font-weight: 700; letter-spacing: -0.3px; }
 
     .notification-btn {
-      position: relative;
-      border: 0;
-      background: transparent;
-      color: white;
-      width: 36px;
-      height: 36px;
-      display: grid;
-      place-items: center;
+      position: relative; border: 0; background: transparent; color: white;
+      width: 36px; height: 36px; display: grid; place-items: center;
     }
 
     .bell {
-      width: 20px;
-      height: 20px;
-      border: 2px solid white;
-      border-radius: 12px 12px 8px 8px;
-      position: relative;
-      border-bottom-width: 3px;
+      width: 20px; height: 20px; border: 2px solid white; border-radius: 12px 12px 8px 8px;
+      position: relative; border-bottom-width: 3px;
     }
 
-    .bell::before {
-      content: "";
-      position: absolute;
-      width: 6px;
-      height: 2px;
-      border-radius: 2px;
-      background: white;
-      left: 5px;
-      bottom: -6px;
-    }
+    .bell::before { content: ""; position: absolute; width: 6px; height: 2px; border-radius: 2px; background: white; left: 5px; bottom: -6px; }
 
     .notification-count {
-      position: absolute;
-      top: -2px;
-      right: -2px;
-      min-width: 20px;
-      height: 20px;
-      padding: 0 4px;
-      border-radius: 10px;
-      background: #ef2a2a;
-      color: #fff;
-      font-size: clamp(9px, 2.5vw, 11px);
-      font-weight: 700;
-      display: grid;
-      place-items: center;
-      border: 2px solid var(--navy);
+      position: absolute; top: -2px; right: -2px; min-width: 20px; height: 20px;
+      padding: 0 4px; border-radius: 10px; background: #ef2a2a; color: #fff;
+      font-size: clamp(9px, 2.5vw, 11px); font-weight: 700; display: grid; place-items: center; border: 2px solid var(--navy);
     }
 
     /* MAIN CONTAINER */
-    .container {
-      width: min(1180px, calc(100% - 24px));
-      margin: 0 auto;
-      padding: 16px 0 24px;
-    }
+    .container { width: min(1180px, calc(100% - 24px)); margin: 0 auto; padding: 16px 0 24px; }
 
     .dashboard-intro {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 20px;
+      display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 20px;
     }
 
-    .intro-title {
-      margin: 0 0 4px;
-      font-size: clamp(18px, 5vw, 26px);
-      line-height: 1.1;
-      letter-spacing: -0.5px;
-    }
-
-    .intro-subtitle {
-      margin: 0;
-      color: #4b5563;
-      font-size: clamp(12px, 3.2vw, 16px);
-    }
+    .intro-title { margin: 0 0 4px; font-size: clamp(18px, 5vw, 26px); line-height: 1.1; }
+    .intro-subtitle { margin: 0; color: #4b5563; font-size: clamp(12px, 3.2vw, 16px); }
 
     .add-vehicle-btn {
-      flex-shrink: 0;
-      border: 0;
-      background: var(--navy-2);
-      color: #fff;
-      border-radius: 10px;
-      min-height: clamp(38px, 10vw, 48px);
-      padding: 0 clamp(10px, 3vw, 18px);
-      font-size: clamp(12px, 3.2vw, 15px);
-      font-weight: 600;
-      box-shadow: 0 4px 12px rgba(16, 38, 77, 0.14);
-      white-space: nowrap;
+      flex-shrink: 0; border: 0; background: var(--navy-2); color: #fff;
+      border-radius: 10px; min-height: clamp(38px, 10vw, 48px);
+      padding: 0 clamp(10px, 3vw, 18px); font-size: clamp(12px, 3.2vw, 15px);
+      font-weight: 600; box-shadow: 0 4px 12px rgba(16, 38, 77, 0.14); white-space: nowrap;
     }
 
-    .add-vehicle-btn span {
-      font-size: clamp(16px, 4vw, 22px);
-      font-weight: 300;
-      vertical-align: -1px;
-      margin-right: 4px;
-    }
+    .add-vehicle-btn span { font-size: clamp(16px, 4vw, 22px); font-weight: 300; vertical-align: -1px; margin-right: 4px; }
 
     /* VEHICLE CARD */
-    #vehicleList {
-      display: grid;
-      gap: 14px;
-    }
+    #vehicleList { display: grid; gap: 14px; }
 
     .vehicle-card {
-      position: relative;
-      background: var(--white);
-      border-radius: 14px;
-      overflow: hidden;
-      border: 1px solid #edf0f5;
-      box-shadow: 0 4px 14px rgba(16, 24, 40, 0.04);
+      position: relative; background: var(--white); border-radius: 14px;
+      overflow: hidden; border: 1px solid #edf0f5; box-shadow: 0 4px 14px rgba(16, 24, 40, 0.04);
     }
 
-    .vehicle-card::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 6px;
-      background: var(--good);
-    }
-
+    .vehicle-card::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background: var(--good); }
     .vehicle-card.status-soon::before { background: var(--soon); }
     .vehicle-card.status-overdue::before { background: var(--overdue); }
 
-    .vehicle-top {
-      padding: 14px 14px 10px 20px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
+    .vehicle-top { padding: 14px 14px 10px 20px; display: flex; align-items: center; gap: 12px; }
 
     .vehicle-icon {
-      width: clamp(44px, 12vw, 64px);
-      height: clamp(44px, 12vw, 64px);
-      border-radius: 12px;
-      background: #edf3ff;
-      display: grid;
-      place-items: center;
-      flex-shrink: 0;
-      font-size: clamp(22px, 6vw, 32px);
+      width: clamp(44px, 12vw, 64px); height: clamp(44px, 12vw, 64px);
+      border-radius: 12px; background: #edf3ff; display: grid; place-items: center;
+      flex-shrink: 0; font-size: clamp(22px, 6vw, 32px);
     }
 
     .status-soon .vehicle-icon { background: #fff6df; }
     .status-overdue .vehicle-icon { background: #ffedef; }
 
-    .vehicle-info {
-      min-width: 0;
-      flex: 1;
-    }
+    .vehicle-info { min-width: 0; flex: 1; }
+    .vehicle-reg { margin: 0; font-size: clamp(16px, 4.5vw, 22px); line-height: 1.1; font-weight: 750; }
+    .vehicle-name { margin: 3px 0 0; font-size: clamp(12px, 3.2vw, 16px); color: #374151; }
+    .more-btn { border: 0; background: transparent; width: 28px; height: 36px; color: #4b5563; font-size: clamp(20px, 5vw, 26px); }
 
-    .vehicle-reg {
-      margin: 0;
-      font-size: clamp(16px, 4.5vw, 22px);
-      line-height: 1.1;
-      font-weight: 750;
-      letter-spacing: 0.1px;
-    }
-
-    .vehicle-name {
-      margin: 3px 0 0;
-      font-size: clamp(12px, 3.2vw, 16px);
-      color: #374151;
-      font-weight: 400;
-    }
-
-    .more-btn {
-      border: 0;
-      background: transparent;
-      width: 28px;
-      height: 36px;
-      color: #4b5563;
-      font-size: clamp(20px, 5vw, 26px);
-      line-height: 1;
-    }
-
-    /* CENTERED 3-LINE METRIC LAYOUT */
-    .vehicle-details {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      padding: 6px 10px 14px 20px;
-    }
+    /* CENTERED METRIC LAYOUT */
+    .vehicle-details { display: grid; grid-template-columns: repeat(3, 1fr); padding: 6px 10px 14px 20px; }
 
     .detail {
-      min-width: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      padding: 0 clamp(4px, 1.5vw, 10px);
-      border-right: 1px solid #d9dde5;
+      min-width: 0; display: flex; flex-direction: column; align-items: center; text-align: center;
+      padding: 0 clamp(4px, 1.5vw, 10px); border-right: 1px solid #d9dde5;
     }
 
     .detail:first-child { padding-left: 0; }
     .detail:last-child { border-right: 0; padding-right: 0; }
 
-    .detail-header {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 5px;
-      margin-bottom: 2px;
-      width: 100%;
-    }
+    .detail-header { display: flex; align-items: center; justify-content: center; gap: 5px; margin-bottom: 2px; width: 100%; }
 
     .detail-icon {
-      width: clamp(18px, 4.5vw, 24px);
-      height: clamp(18px, 4.5vw, 24px);
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      background: var(--good-bg);
-      color: var(--good);
-      font-size: clamp(10px, 2.5vw, 13px);
-      flex-shrink: 0;
+      width: clamp(18px, 4.5vw, 24px); height: clamp(18px, 4.5vw, 24px); border-radius: 50%;
+      display: grid; place-items: center; background: var(--good-bg); color: var(--good);
+      font-size: clamp(10px, 2.5vw, 13px); flex-shrink: 0;
     }
 
     .status-soon .detail-icon { background: var(--soon-bg); color: var(--soon); }
     .status-overdue .detail-icon { background: var(--overdue-bg); color: var(--overdue); }
 
-    .detail-label {
-      margin: 0;
-      font-size: clamp(9px, 2.5vw, 13px);
-      color: #252b35;
-      white-space: nowrap;
-    }
-
-    .detail-date {
-      margin: 2px 0 0;
-      font-size: clamp(10px, 2.8vw, 14px);
-      font-weight: 700;
-      color: var(--good);
-      white-space: nowrap;
-    }
+    .detail-label { margin: 0; font-size: clamp(9px, 2.5vw, 13px); color: #252b35; white-space: nowrap; }
+    .detail-date { margin: 2px 0 0; font-size: clamp(10px, 2.8vw, 14px); font-weight: 700; color: var(--good); white-space: nowrap; }
 
     .status-soon .detail-date { color: var(--soon); }
     .status-overdue .detail-date { color: var(--overdue); }
 
     .status-pill {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 3px;
-      width: max-content;
-      margin-top: 5px;
-      padding: 3px 6px;
-      border-radius: 12px;
-      background: var(--good-bg);
-      color: #15803d;
-      font-size: clamp(8px, 2.4vw, 12px);
-      font-weight: 600;
+      display: inline-flex; align-items: center; justify-content: center; gap: 3px; width: max-content;
+      margin-top: 5px; padding: 3px 6px; border-radius: 12px; background: var(--good-bg); color: #15803d;
+      font-size: clamp(8px, 2.4vw, 12px); font-weight: 600;
     }
 
     .status-soon .status-pill { background: var(--soon-bg); color: #d97706; }
     .status-overdue .status-pill { background: var(--overdue-bg); color: #dc2626; }
 
     .status-symbol {
-      width: clamp(10px, 3vw, 14px);
-      height: clamp(10px, 3vw, 14px);
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      background: currentColor;
-      color: #fff;
-      font-size: clamp(6px, 1.8vw, 9px);
-      font-weight: 800;
+      width: clamp(10px, 3vw, 14px); height: clamp(10px, 3vw, 14px); border-radius: 50%;
+      display: grid; place-items: center; background: currentColor; color: #fff; font-size: clamp(6px, 1.8vw, 9px); font-weight: 800;
+    }
+
+    /* MODAL POPUP FOR ADD VEHICLE */
+    .modal-overlay {
+      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5); z-index: 2000; justify-content: center; align-items: flex-end;
+    }
+
+    .modal-card {
+      background: #fff; width: 100%; max-width: 500px; border-top-left-radius: 20px;
+      border-top-right-radius: 20px; padding: 20px; max-height: 90vh; overflow-y: auto;
+      animation: slideUp 0.25s ease-out;
+    }
+
+    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .modal-title { font-size: clamp(16px, 4.5vw, 20px); font-weight: 700; margin: 0; }
+    .btn-close { background: none; border: none; font-size: 22px; color: var(--muted); cursor: pointer; }
+
+    .form-group { margin-bottom: 12px; }
+    .form-group label { display: block; margin-bottom: 4px; font-size: clamp(11px, 2.8vw, 13px); font-weight: 600; color: #475467; }
+    .form-group input, .form-group select {
+      width: 100%; padding: 10px; border: 1px solid #d0d5dd; border-radius: 8px;
+      font-size: clamp(13px, 3.2vw, 15px); background: #fff; outline: none;
+    }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    .btn-submit {
+      width: 100%; padding: 12px; background: var(--navy-2); color: white; border: none;
+      border-radius: 10px; font-weight: 600; font-size: clamp(14px, 3.5vw, 16px); margin-top: 10px; cursor: pointer;
     }
 
     /* OTHER TABS & BOTTOM NAV */
     .tab-content { display: none; }
     .tab-content.active { display: block; }
 
-    .placeholder-card {
-      background: #fff;
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 20px;
-      box-shadow: 0 4px 14px rgba(16, 24, 40, 0.04);
-    }
-
+    .placeholder-card { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 20px; box-shadow: 0 4px 14px rgba(16, 24, 40, 0.04); }
     .placeholder-card h2 { margin: 0 0 6px; font-size: clamp(16px, 4.5vw, 20px); }
     .placeholder-card p { margin: 0; color: var(--muted); font-size: clamp(12px, 3vw, 14px); line-height: 1.5; }
 
-    .form-group { margin-bottom: 12px; }
-    .form-group label { display: block; margin-bottom: 4px; font-size: clamp(11px, 2.8vw, 13px); font-weight: 600; color: #475467; }
-    .form-group input, .form-group select, .form-group textarea {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #d0d5dd;
-      border-radius: 8px;
-      font-size: clamp(13px, 3.2vw, 15px);
-      background: #fff;
-      outline: none;
-    }
-
     .bottom-nav {
-      position: fixed;
-      z-index: 1000;
-      left: 0; right: 0; bottom: 0;
-      height: clamp(60px, 14vw, 75px);
-      background: rgba(255,255,255,0.98);
-      border-top: 1px solid #e4e7ec;
-      display: flex;
-      justify-content: center;
-      padding: 0 max(8px, env(safe-area-inset-left));
-      padding-right: max(8px, env(safe-area-inset-right));
-      box-shadow: 0 -4px 15px rgba(16, 24, 40, 0.04);
+      position: fixed; z-index: 1000; left: 0; right: 0; bottom: 0;
+      height: clamp(60px, 14vw, 75px); background: rgba(255,255,255,0.98); border-top: 1px solid #e4e7ec;
+      display: flex; justify-content: center; padding: 0 max(8px, env(safe-area-inset-left));
+      padding-right: max(8px, env(safe-area-inset-right)); box-shadow: 0 -4px 15px rgba(16, 24, 40, 0.04);
     }
 
-    .nav-inner {
-      width: min(900px, 100%);
-      display: flex;
-      align-items: stretch;
-      justify-content: space-around;
-    }
+    .nav-inner { width: min(900px, 100%); display: flex; align-items: stretch; justify-content: space-around; }
 
     .nav-item {
-      position: relative;
-      border: 0;
-      background: transparent;
-      color: #475467;
-      min-width: 0;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 2px;
+      position: relative; border: 0; background: transparent; color: #475467; min-width: 0; flex: 1;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
       font-size: clamp(9px, 2.5vw, 12px);
     }
 
     .nav-item.active { color: var(--navy); font-weight: 600; }
-    .nav-item.active::before {
-      content: "";
-      position: absolute;
-      top: 0; left: 20%; right: 20%;
-      height: 3px;
-      background: var(--blue);
-      border-radius: 0 0 4px 4px;
-    }
-
+    .nav-item.active::before { content: ""; position: absolute; top: 0; left: 20%; right: 20%; height: 3px; background: var(--blue); border-radius: 0 0 4px 4px; }
     .nav-icon { font-size: clamp(18px, 5vw, 24px); line-height: 1; }
 
     .empty-state, .error-state { text-align: center; padding: 30px 16px; color: var(--muted); font-size: clamp(12px, 3vw, 14px); }
@@ -503,7 +276,7 @@
 
 <body>
 
-  <!-- SPLASH OVERLAY SCREEN -->
+  <!-- SPLASH OVERLAY -->
   <div id="splashScreen">
     <div class="splash-content">
       <div class="splash-logo">🚗 CarCare+</div>
@@ -514,13 +287,12 @@
     </div>
   </div>
 
+  <!-- APP HEADER -->
   <header class="app-header">
     <div class="header-inner">
       <div class="header-left">
         <button class="menu-btn" onclick="toggleMenu()" aria-label="Menu">
-          <span></span>
-          <span></span>
-          <span></span>
+          <span></span><span></span><span></span>
         </button>
         <div class="page-title" id="pageTitle">My Vehicles</div>
       </div>
@@ -534,7 +306,7 @@
 
   <main class="container">
 
-    <!-- HOME -->
+    <!-- HOME TAB -->
     <section id="tab-home" class="tab-content active">
       <div class="dashboard-intro">
         <div>
@@ -542,7 +314,7 @@
           <p class="intro-subtitle">Here's an overview of your vehicles</p>
         </div>
 
-        <button class="add-vehicle-btn" onclick="addVehicle()">
+        <button class="add-vehicle-btn" onclick="openAddModal()">
           <span>+</span> Add Vehicle
         </button>
       </div>
@@ -550,7 +322,7 @@
       <div id="vehicleList"></div>
     </section>
 
-    <!-- SERVICE -->
+    <!-- SERVICE TAB -->
     <section id="tab-service" class="tab-content">
       <div class="placeholder-card">
         <h2>Service</h2>
@@ -558,7 +330,7 @@
       </div>
     </section>
 
-    <!-- FUEL -->
+    <!-- FUEL TAB -->
     <section id="tab-fuel" class="tab-content">
       <div class="placeholder-card">
         <h2>Fuel Log</h2>
@@ -566,7 +338,7 @@
       </div>
     </section>
 
-    <!-- HISTORY -->
+    <!-- HISTORY TAB -->
     <section id="tab-history" class="tab-content">
       <div class="placeholder-card">
         <h2>History</h2>
@@ -574,7 +346,7 @@
       </div>
     </section>
 
-    <!-- SETTINGS -->
+    <!-- SETTINGS TAB -->
     <section id="tab-settings" class="tab-content">
       <div class="placeholder-card">
         <h2>Settings</h2>
@@ -582,12 +354,70 @@
           <label>Google Apps Script API URL</label>
           <input type="text" value="Connected" readonly>
         </div>
-        <p>Application settings and data connection options can be added here later.</p>
       </div>
     </section>
 
   </main>
 
+  <!-- ADD VEHICLE MODAL POPUP -->
+  <div class="modal-overlay" id="addModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Add New Vehicle</h3>
+        <button class="btn-close" onclick="closeAddModal()">✕</button>
+      </div>
+
+      <form id="addVehicleForm">
+        <div class="form-group">
+          <label>Vehicle Type</label>
+          <select id="add_type" required>
+            <option value="Four Wheeler">🚗 Four Wheeler (Car / SUV)</option>
+            <option value="Two Wheeler">🏍 Two Wheeler (Bike / Scooter)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Vehicle Name / Nickname</label>
+          <input type="text" id="add_name" placeholder="e.g. Family Car" required>
+        </div>
+
+        <div class="form-group">
+          <label>Registration Number</label>
+          <input type="text" id="add_reg" placeholder="e.g. KL-01-AB-1234" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Model</label>
+            <input type="text" id="add_model" placeholder="e.g. Creta">
+          </div>
+          <div class="form-group">
+            <label>Year</label>
+            <input type="number" id="add_year" placeholder="e.g. 2023">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Next Service Date</label>
+          <input type="date" id="add_serviceDate" required>
+        </div>
+
+        <div class="form-group">
+          <label>Insurance Expiry Date</label>
+          <input type="date" id="add_insuranceDate" required>
+        </div>
+
+        <div class="form-group">
+          <label>Pollution (PUC) Expiry Date</label>
+          <input type="date" id="add_pollutionDate" required>
+        </div>
+
+        <button type="submit" class="btn-submit" id="saveBtn">Save Vehicle</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAVIGATION -->
   <nav class="bottom-nav">
     <div class="nav-inner">
       <button class="nav-item active" onclick="switchTab('home', 'My Vehicles', this)">
@@ -620,7 +450,7 @@
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycby8yWrbyX3mZqpoxeGU-PqsKX8ferIPMvdYL-jCLbZW3aHCATVcr6lS-vlSJjnxDMZkPA/exec";
 
-    // --- SPLASH SCREEN PROGRESS LOGIC ---
+    /* SPLASH SCREEN LOGIC */
     let progress = 0;
     let progressInterval;
 
@@ -653,6 +483,10 @@
         splash.style.visibility = "hidden";
       }, 300);
     }
+
+    /* MODAL LOGIC */
+    function openAddModal() { document.getElementById("addModal").style.display = "flex"; }
+    function closeAddModal() { document.getElementById("addModal").style.display = "none"; }
 
     function switchTab(tabId, title, element) {
       document.querySelectorAll(".tab-content").forEach(tab => tab.classList.remove("active"));
@@ -716,7 +550,12 @@
       return "good";
     }
 
+    /* DYNAMIC ICON LOGIC BASED ON VEHICLE TYPE OR NAME */
     function vehicleIcon(vehicle) {
+      const type = String(vehicle.VehicleType || "").toLowerCase();
+      if (type.includes("two")) return "🏍";
+      if (type.includes("four")) return "🚗";
+
       const text = `${vehicle.Name || ""} ${vehicle.RegNumber || ""} ${vehicle.Model || ""}`.toLowerCase();
       if (text.includes("bike") || text.includes("motorcycle") || text.includes("bullet") || text.includes("classic") || text.includes("jupiter") || text.includes("scooter") || text.includes("activa")) {
         return "🏍";
@@ -793,7 +632,7 @@
 
         const result = await response.json();
         let vehicles = Array.isArray(result) ? result : (result && Array.isArray(result.vehicles) ? result.vehicles : []);
-
+        
         renderVehicles(vehicles);
         updateNotificationCount(vehicles);
       } catch (err) {
@@ -836,8 +675,45 @@
       badge.style.display = count > 0 ? "grid" : "none";
     }
 
-    function addVehicle() { alert("Add Vehicle form coming soon!"); }
-    function vehicleMenu(regNumber) { alert(`Vehicle options: ${regNumber}`); }
+    /* SUBMIT NEW VEHICLE TO GOOGLE SHEETS */
+    document.getElementById("addVehicleForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const saveBtn = document.getElementById("saveBtn");
+      saveBtn.innerText = "Saving...";
+      saveBtn.disabled = true;
+
+      const payload = {
+        action: "addVehicle",
+        VehicleID: Date.now(),
+        Name: document.getElementById("add_name").value,
+        RegNumber: document.getElementById("add_reg").value,
+        VehicleType: document.getElementById("add_type").value,
+        Model: document.getElementById("add_model").value,
+        Year: document.getElementById("add_year").value,
+        NextServiceDate: document.getElementById("add_serviceDate").value,
+        InsuranceExpiry: document.getElementById("add_insuranceDate").value,
+        PollutionExpiry: document.getElementById("add_pollutionDate").value,
+        RemindersOn: "TRUE"
+      };
+
+      try {
+        await fetch(API_URL, {
+          method: "POST",
+          body: JSON.stringify(payload)
+        });
+
+        document.getElementById("addVehicleForm").reset();
+        closeAddModal();
+        loadVehicles();
+      } catch (err) {
+        alert("Failed to save vehicle: " + err.message);
+      } finally {
+        saveBtn.innerText = "Save Vehicle";
+        saveBtn.disabled = false;
+      }
+    });
+
+    function vehicleMenu(regNumber) { alert(`Vehicle options for ${regNumber}`); }
     function showNotifications() { alert("Vehicle reminders will appear here."); }
     function toggleMenu() { alert("Menu coming soon."); }
 
