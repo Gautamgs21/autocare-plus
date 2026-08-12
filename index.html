@@ -3,56 +3,153 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="theme-color" content="#1e293b">
-  <title>CarCare+</title>
+  <title>My Vehicles</title>
   <style>
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background-color: #f8fafc;
+      background-color: #f4f6f9;
       margin: 0;
       padding: 0;
-      color: #0f172a;
-      padding-bottom: 80px;
+      color: #1e293b;
+      padding-bottom: 90px;
     }
 
-    .app-header {
+    /* Top Navigation Bar */
+    .top-bar {
+      background-color: #0d1b2a;
+      color: #ffffff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 20px;
       position: sticky;
       top: 0;
-      background-color: #1e293b;
-      color: #ffffff;
-      padding: 16px;
-      text-align: center;
-      font-size: 18px;
-      font-weight: 700;
       z-index: 100;
     }
-
-    .container {
-      max-width: 480px;
-      margin: 0 auto;
-      padding: 16px;
+    .top-bar h1 { font-size: 20px; font-weight: 700; margin: 0; flex-grow: 1; margin-left: 15px; }
+    .icon-btn { background: none; border: none; color: white; font-size: 22px; cursor: pointer; position: relative; }
+    .badge-count {
+      position: absolute;
+      top: -2px; right: -4px;
+      background: #ef4444;
+      color: white;
+      font-size: 10px;
+      font-weight: bold;
+      border-radius: 50%;
+      padding: 2px 5px;
     }
 
-    /* Tab Section Controls */
-    .tab-content { display: none; }
-    .tab-content.active { display: block; }
+    .container { max-width: 500px; margin: 0 auto; padding: 16px; }
+
+    /* Overview Header */
+    .overview-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .greeting h2 { margin: 0; font-size: 22px; color: #0f172a; }
+    .greeting p { margin: 4px 0 0 0; color: #64748b; font-size: 13px; }
+    .btn-add {
+      background-color: #0d1b2a;
+      color: white;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+    }
+
+    /* Vehicle Cards */
+    .card {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+      position: relative;
+      border-left: 5px solid #10b981; /* Default Green */
+    }
+    .card.status-yellow { border-left-color: #f59e0b; }
+    .card.status-red { border-left-color: #ef4444; }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .vehicle-info { display: flex; align-items: center; gap: 12px; }
+    .vehicle-avatar {
+      width: 42px; height: 42px;
+      border-radius: 10px;
+      background-color: #f1f5f9;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+    }
+    .reg-number { font-size: 17px; font-weight: 800; color: #0f172a; margin: 0; }
+    .model-name { font-size: 13px; color: #64748b; margin: 2px 0 0 0; }
+
+    /* Grid of 3 Status Items */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      border-top: 1px solid #f1f5f9;
+      padding-top: 12px;
+    }
+    .metric-item { display: flex; flex-direction: column; align-items: flex-start; }
+    .metric-title-row { display: flex; align-items: center; gap: 4px; margin-bottom: 4px; }
+    .icon-circle {
+      width: 22px; height: 22px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px;
+    }
+    .metric-label { font-size: 10px; color: #64748b; font-weight: 500; }
+    .metric-date { font-size: 12px; font-weight: 700; margin-bottom: 6px; }
+
+    /* Pill Badges */
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    /* Green Theme */
+    .theme-green .icon-circle { background-color: #d1fae5; color: #059669; }
+    .theme-green .metric-date { color: #059669; }
+    .theme-green .pill { background-color: #d1fae5; color: #059669; }
+
+    /* Yellow Theme */
+    .theme-yellow .icon-circle { background-color: #fef3c7; color: #d97706; }
+    .theme-yellow .metric-date { color: #d97706; }
+    .theme-yellow .pill { background-color: #fef3c7; color: #d97706; }
+
+    /* Red Theme */
+    .theme-red .icon-circle { background-color: #fee2e2; color: #dc2626; }
+    .theme-red .metric-date { color: #dc2626; }
+    .theme-red .pill { background-color: #fee2e2; color: #dc2626; }
 
     /* Bottom Navigation Bar */
     .bottom-nav {
       position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
+      bottom: 0; left: 0; right: 0;
       background: #ffffff;
       border-top: 1px solid #e2e8f0;
       display: flex;
       justify-content: space-around;
-      padding: 8px 0;
+      padding: 10px 0 14px;
       z-index: 1000;
     }
-
     .nav-item {
       display: flex;
       flex-direction: column;
@@ -62,224 +159,161 @@
       background: none;
       border: none;
       cursor: pointer;
-      flex: 1;
     }
-
-    .nav-item.active { color: #2563eb; font-weight: 600; }
-    .nav-icon { font-size: 18px; margin-bottom: 2px; }
-
-    /* UI Cards */
-    .card {
-      background: #ffffff;
-      border-radius: 14px;
-      padding: 16px;
-      margin-bottom: 12px;
-      border: 1px solid #e2e8f0;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.02);
-    }
-
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-      border-bottom: 1px solid #f1f5f9;
-      padding-bottom: 10px;
-    }
-
-    .vehicle-title { font-size: 16px; font-weight: 700; color: #0f172a; margin: 0; }
-    .reg-badge { background-color: #f1f5f9; color: #475569; font-size: 12px; font-weight: 600; padding: 4px 8px; border-radius: 6px; border: 1px solid #cbd5e1; }
-    
-    .status-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; font-size: 13px; }
-    .status-label { color: #64748b; font-weight: 500; }
-    .status-value { font-weight: 600; }
-
-    /* Forms */
-    .form-group { margin-bottom: 12px; }
-    .form-group label { display: block; font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 4px; }
-    .form-group input, .form-group select, .form-group textarea {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #cbd5e1;
-      border-radius: 8px;
-      font-size: 15px;
-      background-color: #fff;
-    }
-
-    .btn-primary {
-      background-color: #2563eb;
-      color: white;
-      width: 100%;
-      padding: 12px;
-      border: none;
-      border-radius: 8px;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      margin-bottom: 14px;
-    }
+    .nav-item.active { color: #0d1b2a; font-weight: 700; }
+    .nav-icon { font-size: 20px; margin-bottom: 2px; }
   </style>
 </head>
 <body>
 
-  <div class="app-header" id="pageTitle">Vehicles</div>
-
-  <div class="container">
-
-    <!-- 1. DASHBOARD TAB -->
-    <div id="tab-dashboard" class="tab-content">
-      <h3 style="font-size: 15px; margin-bottom: 10px;">Dashboard Overview</h3>
-      <p style="font-size: 14px; color: #64748b;">(Upcoming deadlines and stats will load here later.)</p>
-    </div>
-
-    <!-- 2. VEHICLES TAB (Default) -->
-    <div id="tab-vehicles" class="tab-content active">
-      <button class="btn-primary" onclick="alert('Add vehicle form coming soon!')">+ Add New Vehicle</button>
-      
-      <div id="vehicleList">
-        <p style="text-align:center; color:#64748b; margin-top:20px;">Loading vehicles from Google Sheets...</p>
-      </div>
-    </div>
-
-    <!-- 3. SERVICE TAB -->
-    <div id="tab-service" class="tab-content">
-      <div class="card">
-        <h3 style="margin-top:0; font-size: 16px;">Add Service Log</h3>
-        <p style="font-size: 14px; color: #64748b;">(Form to record service repairs will be active soon.)</p>
-      </div>
-    </div>
-
-    <!-- 4. FUEL TAB -->
-    <div id="tab-fuel" class="tab-content">
-      <div class="card">
-        <h3 style="margin-top:0; font-size: 16px;">Log Fuel Fill-Up</h3>
-        <p style="font-size: 14px; color: #64748b;">(Form to record fuel consumption will be active soon.)</p>
-      </div>
-    </div>
-
-    <!-- 5. HISTORY TAB -->
-    <div id="tab-history" class="tab-content">
-       <div class="card">
-        <h3 style="margin-top:0; font-size: 16px;">Service History</h3>
-        <p style="font-size: 14px; color: #64748b;">(Service logs will populate here soon.)</p>
-      </div>
-    </div>
-
-    <!-- 6. SETTINGS TAB -->
-    <div id="tab-settings" class="tab-content">
-      <div class="card">
-        <h3 style="margin-top:0; font-size: 16px;">App Settings</h3>
-        <div class="form-group">
-          <label>Google Apps Script API URL</label>
-          <input type="text" value="Connected" readonly>
-        </div>
-      </div>
-    </div>
-
+  <!-- Top Navigation Header -->
+  <div class="top-bar">
+    <button class="icon-btn">☰</button>
+    <h1>My Vehicles</h1>
+    <button class="icon-btn">
+      🔔<span class="badge-count">2</span>
+    </button>
   </div>
 
-  <!-- Bottom Navigation Tabs -->
+  <div class="container">
+    <!-- Greeting & Action Header -->
+    <div class="overview-header">
+      <div class="greeting">
+        <h2>Hello! 👋</h2>
+        <p>Here’s an overview of your vehicles</p>
+      </div>
+      <button class="btn-add" onclick="alert('Add vehicle feature coming next!')">
+        <span>+</span> Add Vehicle
+      </button>
+    </div>
+
+    <!-- Vehicle Cards injected here -->
+    <div id="vehicleList">
+      <p style="text-align: center; color: #64748b; margin-top: 30px;">Loading your dashboard...</p>
+    </div>
+  </div>
+
+  <!-- Bottom Navigation -->
   <div class="bottom-nav">
-    <button class="nav-item" onclick="switchTab('dashboard', 'Dashboard', this)">
-      <span class="nav-icon">📊</span>
-      Dashboard
+    <button class="nav-item active">
+      <span class="nav-icon">🏠</span>
+      Home
     </button>
-    <button class="nav-item active" onclick="switchTab('vehicles', 'Vehicles', this)">
-      <span class="nav-icon">🚗</span>
-      Vehicles
-    </button>
-    <button class="nav-item" onclick="switchTab('service', 'Add Service', this)">
+    <button class="nav-item">
       <span class="nav-icon">🛠️</span>
-      Service
+      Services
     </button>
-    <button class="nav-item" onclick="switchTab('fuel', 'Fuel Log', this)">
-      <span class="nav-icon">⛽</span>
-      Fuel
+    <button class="nav-item">
+      <span class="nav-icon">📄</span>
+      Documents
     </button>
-    <button class="nav-item" onclick="switchTab('history', 'History', this)">
-      <span class="nav-icon">📜</span>
-      History
-    </button>
-    <button class="nav-item" onclick="switchTab('settings', 'Settings', this)">
-      <span class="nav-icon">⚙️</span>
-      Settings
+    <button class="nav-item">
+      <span class="nav-icon">⏱️</span>
+      Reports
     </button>
   </div>
 
   <script>
-    // --- 1. SETTINGS: PASTE YOUR APP SCRIPT URL HERE ---
-    const API_URL = "YOUR_WEB_APP_URL_HERE";
+    // PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL HERE:
+    const API_URL = "https://script.google.com/u/0/home/projects/1hgoEjGoMz8ln2HjDzzIcyexr68eLrTwEpNTo6LTMyQCgqOaa3nsZl5qL/edit";
 
-    // --- 2. TAB NAVIGATION LOGIC ---
-    function switchTab(tabId, title, element) {
-      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-      document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+    function getStatusData(dateString) {
+      if (!dateString) return { badgeText: "Unknown", colorClass: "theme-green", level: 1 };
       
-      document.getElementById('tab-' + tabId).classList.add('active');
-      element.classList.add('active');
-      document.getElementById('pageTitle').innerText = title;
-    }
-
-    // --- 3. FETCH & DISPLAY VEHICLES LOGIC ---
-    function getStatusBadge(dateString) {
-      if (!dateString) return "❓ Unknown";
-      
-      // Handle the text date format coming from Sheets getDisplayValues()
-      const targetDate = new Date(dateString); 
-      if (isNaN(targetDate.getTime())) return "❓ Invalid Date";
+      const targetDate = new Date(dateString);
+      if (isNaN(targetDate.getTime())) return { badgeText: "Invalid", colorClass: "theme-green", level: 1 };
 
       const today = new Date();
       today.setHours(0,0,0,0);
       const diffDays = Math.ceil((targetDate - today) / (1000 * 60 * 60 * 24));
 
-      if (diffDays < 0) return "❌ Overdue";
-      if (diffDays <= 14) return "⚠️ Due Soon";
-      return "✅ Good";
+      if (diffDays < 0) {
+        return { badgeText: "✖ Overdue", colorClass: "theme-red", level: 3 };
+      } else if (diffDays <= 14) {
+        return { badgeText: "⚠️ Due Soon", colorClass: "theme-yellow", level: 2 };
+      } else {
+        return { badgeText: "✔ Good", colorClass: "theme-green", level: 1 };
+      }
     }
 
-    async function loadVehicles() {
+    async function loadDashboard() {
       const listContainer = document.getElementById("vehicleList");
       try {
         const response = await fetch(`${API_URL}?action=getVehicles`);
         const vehicles = await response.json();
 
-        listContainer.innerHTML = ""; // Clear loader
+        listContainer.innerHTML = "";
 
         if (!vehicles || vehicles.length === 0) {
-          listContainer.innerHTML = "<p style='text-align:center; color:#64748b;'>No vehicles added yet.</p>";
+          listContainer.innerHTML = "<p style='text-align:center; color:#64748b;'>No vehicles found.</p>";
           return;
         }
 
         vehicles.forEach(vehicle => {
+          const serviceStat = getStatusData(vehicle.NextServiceDate);
+          const insuranceStat = getStatusData(vehicle.InsuranceExpiry);
+          const pollutionStat = getStatusData(vehicle.PollutionExpiry);
+
+          // Determine card left border color based on worst status
+          const worstLevel = Math.max(serviceStat.level, insuranceStat.level, pollutionStat.level);
+          let borderClass = "";
+          if (worstLevel === 3) borderClass = "status-red";
+          else if (worstLevel === 2) borderClass = "status-yellow";
+
           const card = document.createElement("div");
-          card.className = "card";
+          card.className = `card ${borderClass}`;
           card.innerHTML = `
-            <div class="card-header">
-              <h3 class="vehicle-title">${vehicle.Name}</h3>
-              <span class="reg-badge">${vehicle.RegNumber}</span>
+            <div class="card-top">
+              <div class="vehicle-info">
+                <div class="vehicle-avatar">🚗</div>
+                <div>
+                  <h3 class="reg-number">${vehicle.RegNumber}</h3>
+                  <p class="model-name">${vehicle.Name} ${vehicle.Model ? '• ' + vehicle.Model : ''}</p>
+                </div>
+              </div>
+              <div style="color:#94a3b8; font-weight:bold; cursor:pointer;">⋮</div>
             </div>
-            <div class="status-row">
-              <span class="status-label">Next Service</span>
-              <span class="status-value">${getStatusBadge(vehicle.NextServiceDate)} <br><small style="color:#94a3b8; font-weight:normal;">(${vehicle.NextServiceDate})</small></span>
-            </div>
-            <div class="status-row">
-              <span class="status-label">Insurance</span>
-              <span class="status-value">${getStatusBadge(vehicle.InsuranceExpiry)} <br><small style="color:#94a3b8; font-weight:normal;">(${vehicle.InsuranceExpiry})</small></span>
-            </div>
-            <div class="status-row">
-              <span class="status-label">Pollution (PUC)</span>
-              <span class="status-value">${getStatusBadge(vehicle.PollutionExpiry)} <br><small style="color:#94a3b8; font-weight:normal;">(${vehicle.PollutionExpiry})</small></span>
+
+            <div class="metrics-grid">
+              <!-- Next Service -->
+              <div class="metric-item ${serviceStat.colorClass}">
+                <div class="metric-title-row">
+                  <div class="icon-circle">🔧</div>
+                  <span class="metric-label">Next Service</span>
+                </div>
+                <div class="metric-date">${vehicle.NextServiceDate || 'N/A'}</div>
+                <div class="pill">${serviceStat.badgeText}</div>
+              </div>
+
+              <!-- Insurance -->
+              <div class="metric-item ${insuranceStat.colorClass}">
+                <div class="metric-title-row">
+                  <div class="icon-circle">🛡️</div>
+                  <span class="metric-label">Insurance Expiry</span>
+                </div>
+                <div class="metric-date">${vehicle.InsuranceExpiry || 'N/A'}</div>
+                <div class="pill">${insuranceStat.badgeText}</div>
+              </div>
+
+              <!-- Pollution -->
+              <div class="metric-item ${pollutionStat.colorClass}">
+                <div class="metric-title-row">
+                  <div class="icon-circle">🍃</div>
+                  <span class="metric-label">Pollution Expiry</span>
+                </div>
+                <div class="metric-date">${vehicle.PollutionExpiry || 'N/A'}</div>
+                <div class="pill">${pollutionStat.badgeText}</div>
+              </div>
             </div>
           `;
           listContainer.appendChild(card);
         });
-      } catch(err) {
-        listContainer.innerHTML = `<p style="text-align:center; color:#ef4444;">Failed to connect to Google Sheets.<br><small>${err.message}</small></p>`;
+      } catch (err) {
+        listContainer.innerHTML = `<p style="text-align:center; color:#ef4444;">Failed to load data from Google Sheets.</p>`;
       }
     }
 
-    // --- 4. INITIALIZE APP ---
-    loadVehicles();
+    loadDashboard();
   </script>
 </body>
 </html>
