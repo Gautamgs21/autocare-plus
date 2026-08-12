@@ -168,7 +168,7 @@
     .vehicle-name { margin: 3px 0 0; font-size: clamp(12px, 3.2vw, 16px); color: #374151; }
     .more-btn { border: 0; background: transparent; width: 28px; height: 36px; color: #4b5563; font-size: clamp(20px, 5vw, 26px); }
 
-    /* CENTERED METRIC LAYOUT */
+    /* METRICS */
     .vehicle-details { display: grid; grid-template-columns: repeat(3, 1fr); padding: 6px 10px 14px 20px; }
 
     .detail {
@@ -201,7 +201,6 @@
       display: grid; place-items: center; background: currentColor; color: #fff; font-size: clamp(6px, 1.8vw, 9px); font-weight: 800;
     }
 
-    /* INDIVIDUAL STATUS STATES */
     .detail.status-expired .detail-icon { background: var(--overdue-bg); color: var(--overdue); }
     .detail.status-expired .detail-date { color: var(--overdue); }
     .detail.status-expired .status-pill { background: var(--overdue-bg); color: #dc2626; }
@@ -213,9 +212,7 @@
     .detail.status-soon-blink .detail-icon { background: var(--soon-bg); color: var(--soon); }
     .detail.status-soon-blink .detail-date { color: var(--soon); }
     .detail.status-soon-blink .status-pill { 
-      background: var(--soon-bg); 
-      color: #d97706; 
-      animation: pulseBlink 1s infinite ease-in-out; 
+      background: var(--soon-bg); color: #d97706; animation: pulseBlink 1s infinite ease-in-out; 
     }
 
     @keyframes pulseBlink {
@@ -223,7 +220,31 @@
       50% { opacity: 0.35; transform: scale(0.95); }
     }
 
-    /* CENTERED MODAL POPUP */
+    /* ACTION SHEET (SIDE OPTIONS DRAWER) */
+    .action-sheet-overlay {
+      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.4); z-index: 3000; justify-content: flex-end; align-items: flex-end;
+    }
+
+    .action-sheet {
+      background: #fff; width: 100%; border-top-left-radius: 16px; border-top-right-radius: 16px;
+      padding: 16px; animation: slideUpSheet 0.2s ease-out;
+    }
+
+    @keyframes slideUpSheet { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+    .action-title { font-size: 14px; font-weight: 600; color: var(--muted); margin: 0 0 12px; text-align: center; }
+
+    .action-btn {
+      width: 100%; padding: 14px; border: none; background: #f8fafc; border-radius: 10px;
+      font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 8px;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+
+    .action-btn.delete { color: #dc2626; background: #fef2f2; }
+    .action-btn.cancel { background: #e2e8f0; color: #475569; margin-bottom: 0; margin-top: 4px; }
+
+    /* MODAL POPUP FOR ADD/EDIT VEHICLE */
     .modal-overlay {
       display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(0,0,0,0.5); z-index: 2000; justify-content: center; align-items: center; padding: 16px;
@@ -234,10 +255,7 @@
       animation: popUp 0.2s ease-out;
     }
 
-    @keyframes popUp { 
-      from { transform: scale(0.85); opacity: 0; } 
-      to { transform: scale(1); opacity: 1; } 
-    }
+    @keyframes popUp { from { transform: scale(0.85); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
     .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
     .modal-title { font-size: clamp(16px, 4.5vw, 20px); font-weight: 700; margin: 0; }
@@ -251,14 +269,8 @@
       appearance: none; box-sizing: border-box;
     }
 
-    input[type="date"]::-webkit-date-and-time-value {
-      text-align: left;
-      margin: 0;
-    }
-
-    input[type="date"] {
-      min-height: 42px;
-    }
+    input[type="date"]::-webkit-date-and-time-value { text-align: left; margin: 0; }
+    input[type="date"] { min-height: 42px; }
 
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
@@ -384,15 +396,27 @@
 
   </main>
 
-  <!-- ADD VEHICLE MODAL POPUP -->
+  <!-- ACTION SHEET OVERLAY (OPTIONS MENU) -->
+  <div class="action-sheet-overlay" id="actionSheet">
+    <div class="action-sheet">
+      <div class="action-title" id="actionSheetTitle">Vehicle Options</div>
+      <button class="action-btn" onclick="handleEditFromSheet()">✏️ Edit Vehicle</button>
+      <button class="action-btn delete" onclick="handleDeleteFromSheet()">🗑️ Delete Vehicle</button>
+      <button class="action-btn cancel" onclick="closeActionSheet()">Cancel</button>
+    </div>
+  </div>
+
+  <!-- ADD/EDIT VEHICLE MODAL POPUP -->
   <div class="modal-overlay" id="addModal">
     <div class="modal-card">
       <div class="modal-header">
-        <h3 class="modal-title">Add New Vehicle</h3>
+        <h3 class="modal-title" id="modalFormTitle">Add New Vehicle</h3>
         <button class="btn-close" onclick="closeAddModal()">✕</button>
       </div>
 
       <form id="addVehicleForm">
+        <input type="hidden" id="add_vehicleId">
+
         <div class="form-group">
           <label>Vehicle Type</label>
           <select id="add_type" required>
@@ -437,6 +461,14 @@
           <input type="date" id="add_pollutionDate" required>
         </div>
 
+        <div class="form-group">
+          <label>Reminders</label>
+          <select id="add_reminders">
+            <option value="TRUE">Enabled</option>
+            <option value="FALSE">Disabled</option>
+          </select>
+        </div>
+
         <button type="submit" class="btn-submit" id="saveBtn">Save Vehicle</button>
       </form>
     </div>
@@ -475,6 +507,9 @@
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycby8yWrbyX3mZqpoxeGU-PqsKX8ferIPMvdYL-jCLbZW3aHCATVcr6lS-vlSJjnxDMZkPA/exec";
 
+    let loadedVehicles = [];
+    let activeSelectedVehicle = null;
+
     /* SPLASH SCREEN LOGIC */
     let progress = 0;
     let progressInterval;
@@ -509,9 +544,69 @@
       }, 300);
     }
 
-    /* MODAL LOGIC */
-    function openAddModal() { document.getElementById("addModal").style.display = "flex"; }
+    /* MODAL & ACTION SHEET LOGIC */
+    function openAddModal(isEdit = false) { 
+      document.getElementById("modalFormTitle").innerText = isEdit ? "Edit Vehicle" : "Add New Vehicle";
+      if (!isEdit) {
+        document.getElementById("addVehicleForm").reset();
+        document.getElementById("add_vehicleId").value = "";
+      }
+      document.getElementById("addModal").style.display = "flex"; 
+    }
     function closeAddModal() { document.getElementById("addModal").style.display = "none"; }
+
+    function openActionSheet(regNumber) {
+      activeSelectedVehicle = loadedVehicles.find(v => String(v.RegNumber) === String(regNumber));
+      if (!activeSelectedVehicle) return;
+      
+      document.getElementById("actionSheetTitle").innerText = activeSelectedVehicle.RegNumber;
+      document.getElementById("actionSheet").style.display = "flex";
+    }
+
+    function closeActionSheet() {
+      document.getElementById("actionSheet").style.display = "none";
+    }
+
+    function handleEditFromSheet() {
+      closeActionSheet();
+      if (!activeSelectedVehicle) return;
+
+      document.getElementById("add_vehicleId").value = activeSelectedVehicle.VehicleID || "";
+      document.getElementById("add_name").value = activeSelectedVehicle.Name || "";
+      document.getElementById("add_reg").value = activeSelectedVehicle.RegNumber || "";
+      document.getElementById("add_type").value = activeSelectedVehicle.VehicleType || "Four Wheeler";
+      document.getElementById("add_model").value = activeSelectedVehicle.Model || "";
+      document.getElementById("add_year").value = activeSelectedVehicle.Year || "";
+      document.getElementById("add_serviceDate").value = formatDateForInput(activeSelectedVehicle.NextServiceDate);
+      document.getElementById("add_insuranceDate").value = formatDateForInput(activeSelectedVehicle.InsuranceExpiry);
+      document.getElementById("add_pollutionDate").value = formatDateForInput(activeSelectedVehicle.PollutionExpiry);
+      document.getElementById("add_reminders").value = activeSelectedVehicle.RemindersOn || "TRUE";
+
+      openAddModal(true);
+    }
+
+    async function handleDeleteFromSheet() {
+      if (!activeSelectedVehicle) return;
+      if (!confirm(`Are you sure you want to delete ${activeSelectedVehicle.RegNumber}?`)) return;
+
+      closeActionSheet();
+      startProgress();
+
+      try {
+        await fetch(API_URL, {
+          method: "POST",
+          body: JSON.stringify({
+            action: "deleteVehicle",
+            VehicleID: activeSelectedVehicle.VehicleID,
+            RegNumber: activeSelectedVehicle.RegNumber
+          })
+        });
+        loadVehicles();
+      } catch (err) {
+        alert("Failed to delete vehicle: " + err.message);
+        finishProgress();
+      }
+    }
 
     function switchTab(tabId, title, element) {
       document.querySelectorAll(".tab-content").forEach(tab => tab.classList.remove("active"));
@@ -525,7 +620,6 @@
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
-    /* UPDATED STATUS CALCULATION LOGIC */
     function getStatus(dateString) {
       if (!dateString) return { type: "unknown", label: "Unknown", symbol: "?" };
       const targetDate = parseSheetDate(dateString);
@@ -537,22 +631,9 @@
 
       const diffDays = Math.ceil((targetDate - today) / (1000 * 60 * 60 * 24));
 
-      // 1. Past due date -> Expired (Red)
-      if (diffDays < 0) {
-        return { type: "expired", label: "Expired", symbol: "×" };
-      }
-
-      // 2. Next week (0 to 7 days) -> Due Soon (Orange + Blinking)
-      if (diffDays <= 7) {
-        return { type: "soon-blink", label: "Due Soon", symbol: "!" };
-      }
-
-      // 3. Within a month (8 to 30 days) -> Due Soon (Orange)
-      if (diffDays <= 30) {
-        return { type: "soon", label: "Due Soon", symbol: "!" };
-      }
-
-      // 4. After 1 month -> Good (Green)
+      if (diffDays < 0) return { type: "expired", label: "Expired", symbol: "×" };
+      if (diffDays <= 7) return { type: "soon-blink", label: "Due Soon", symbol: "!" };
+      if (diffDays <= 30) return { type: "soon", label: "Due Soon", symbol: "!" };
       return { type: "good", label: "Good", symbol: "✓" };
     }
 
@@ -578,6 +659,15 @@
       const day = String(date.getDate()).padStart(2, "0");
       const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
       return `${day} ${monthNames[date.getMonth()]} ${date.getFullYear()}`;
+    }
+
+    function formatDateForInput(dateString) {
+      const date = parseSheetDate(dateString);
+      if (!date || isNaN(date.getTime())) return "";
+      const yyyy = date.getFullYear();
+      const mm = String(date.getMonth() + 1).padStart(2, "0");
+      const dd = String(date.getDate()).padStart(2, "0");
+      return `${yyyy}-${mm}-${dd}`;
     }
 
     function getOverallStatus(vehicle) {
@@ -627,7 +717,7 @@
             <h2 class="vehicle-reg">${escapeHTML(vehicle.RegNumber || "Vehicle")}</h2>
             <p class="vehicle-name">${escapeHTML(vehicle.Name || "")} ${vehicle.Model ? '• ' + escapeHTML(vehicle.Model) : ''}</p>
           </div>
-          <button class="more-btn" onclick="vehicleMenu('${escapeJS(vehicle.RegNumber || "")}')" aria-label="Vehicle options">⋮</button>
+          <button class="more-btn" onclick="openActionSheet('${escapeJS(vehicle.RegNumber || "")}')" aria-label="Vehicle options">⋮</button>
         </div>
 
         <div class="vehicle-details">
@@ -671,10 +761,10 @@
         if (!response.ok) throw new Error(`Server returned ${response.status}`);
 
         const result = await response.json();
-        let vehicles = Array.isArray(result) ? result : (result && Array.isArray(result.vehicles) ? result.vehicles : []);
+        loadedVehicles = Array.isArray(result) ? result : (result && Array.isArray(result.vehicles) ? result.vehicles : []);
         
-        renderVehicles(vehicles);
-        updateNotificationCount(vehicles);
+        renderVehicles(loadedVehicles);
+        updateNotificationCount(loadedVehicles);
       } catch (err) {
         listContainer.innerHTML = `
           <div class="error-state">
@@ -715,16 +805,19 @@
       badge.style.display = count > 0 ? "grid" : "none";
     }
 
-    /* SUBMIT NEW VEHICLE TO GOOGLE SHEETS */
+    /* SUBMIT (ADD OR EDIT) VEHICLE */
     document.getElementById("addVehicleForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       const saveBtn = document.getElementById("saveBtn");
       saveBtn.innerText = "Saving...";
       saveBtn.disabled = true;
 
+      const vehicleId = document.getElementById("add_vehicleId").value;
+      const isEdit = Boolean(vehicleId);
+
       const payload = {
-        action: "addVehicle",
-        VehicleID: Date.now(),
+        action: isEdit ? "editVehicle" : "addVehicle",
+        VehicleID: vehicleId || Date.now(),
         Name: document.getElementById("add_name").value,
         RegNumber: document.getElementById("add_reg").value,
         VehicleType: document.getElementById("add_type").value,
@@ -733,7 +826,7 @@
         NextServiceDate: document.getElementById("add_serviceDate").value,
         InsuranceExpiry: document.getElementById("add_insuranceDate").value,
         PollutionExpiry: document.getElementById("add_pollutionDate").value,
-        RemindersOn: "TRUE"
+        RemindersOn: document.getElementById("add_reminders").value
       };
 
       try {
@@ -753,7 +846,6 @@
       }
     });
 
-    function vehicleMenu(regNumber) { alert(`Vehicle options for ${regNumber}`); }
     function showNotifications() { alert("Vehicle reminders will appear here."); }
     function toggleMenu() { alert("Menu coming soon."); }
 
