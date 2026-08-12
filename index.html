@@ -93,6 +93,7 @@
     }
 
     .header-left { display: flex; align-items: center; gap: 12px; }
+    .header-right { display: flex; align-items: center; gap: 8px; }
 
     .menu-btn {
       width: 28px; height: 24px; padding: 0; border: 0; background: transparent;
@@ -103,9 +104,10 @@
 
     .page-title { font-size: clamp(18px, 5vw, 26px); font-weight: 700; letter-spacing: -0.3px; }
 
-    .notification-btn {
-      position: relative; border: 0; background: transparent; color: white;
+    .header-action-btn {
+      border: 0; background: transparent; color: white;
       width: 36px; height: 36px; display: grid; place-items: center;
+      font-size: 18px; position: relative;
     }
 
     .bell {
@@ -261,7 +263,7 @@
       border-collapse: collapse;
       text-align: left;
       font-size: clamp(12px, 3vw, 14px);
-      min-width: 700px;
+      min-width: 750px;
     }
 
     .service-table th {
@@ -280,6 +282,16 @@
 
     .service-table tr:last-child td { border-bottom: none; }
     .service-table tr:nth-child(even) { background: #f8fafc; }
+
+    .btn-delete-row {
+      background: #fef2f2;
+      border: 1px solid #fca5a5;
+      color: #dc2626;
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 12px;
+      cursor: pointer;
+    }
 
     /* ACTION SHEET */
     .action-sheet-overlay {
@@ -395,10 +407,13 @@
         <div class="page-title" id="pageTitle">My Vehicles</div>
       </div>
 
-      <button class="notification-btn" onclick="showNotifications()" aria-label="Notifications">
-        <span class="bell"></span>
-        <span class="notification-count" id="notificationCount">0</span>
-      </button>
+      <div class="header-right">
+        <button class="header-action-btn" onclick="loadVehicles()" title="Refresh Data" aria-label="Refresh">🔄</button>
+        <button class="header-action-btn" onclick="showNotifications()" aria-label="Notifications">
+          <span class="bell"></span>
+          <span class="notification-count" id="notificationCount">0</span>
+        </button>
+      </div>
     </div>
   </header>
 
@@ -769,6 +784,28 @@
       }
     }
 
+    async function deleteServiceLogRow(logId) {
+      if (!confirm("Are you sure you want to delete this service record?")) return;
+      startProgress();
+
+      try {
+        await fetch(API_URL, {
+          method: "POST",
+          body: JSON.stringify({
+            action: "deleteServiceLog",
+            LogID: logId
+          })
+        });
+        await loadVehicles();
+        if (activeSelectedVehicle) {
+          openVehicleServiceLogs(activeSelectedVehicle);
+        }
+      } catch (err) {
+        alert("Failed to delete service log: " + err.message);
+        finishProgress();
+      }
+    }
+
     function switchTab(tabId, title, element) {
       document.querySelectorAll(".tab-content").forEach(tab => tab.classList.remove("active"));
       document.querySelectorAll(".nav-item").forEach(nav => nav.classList.remove("active"));
@@ -917,7 +954,6 @@
       return card;
     }
 
-    /* RENDER VEHICLES ON SERVICE TAB */
     function renderServiceVehicleCards() {
       const container = document.getElementById("serviceVehicleList");
       container.innerHTML = "";
@@ -950,6 +986,7 @@
     }
 
     function openVehicleServiceLogs(vehicle) {
+      activeSelectedVehicle = vehicle;
       document.getElementById("serviceVehicleList").style.display = "none";
       document.getElementById("serviceDetailsView").style.display = "block";
       document.getElementById("selectedVehicleTitle").innerText = `${vehicleIcon(vehicle)} ${vehicle.RegNumber} - ${vehicle.Name || ""} (${vehicle.Model || ""})`;
@@ -957,12 +994,19 @@
       const container = document.getElementById("serviceLogsTableContainer");
       const vId = String(vehicle.VehicleID || vehicle.RegNumber);
 
-      const logs = loadedServiceLogs.filter(log => String(log.VehicleID) === vId || String(log.VehicleID) === String(vehicle.RegNumber));
+      let logs = loadedServiceLogs.filter(log => String(log.VehicleID) === vId || String(log.VehicleID) === String(vehicle.RegNumber));
 
       if (logs.length === 0) {
         container.innerHTML = `<div class="empty-state">No service logs found for this vehicle.</div>`;
         return;
       }
+
+      // SORT: Latest service on top
+      logs.sort((a, b) => {
+        const dateA = parseSheetDate(a["Service Date"] || a.ServiceDate) || 0;
+        const dateB = parseSheetDate(b["Service Date"] || b.ServiceDate) || 0;
+        return dateB - dateA;
+      });
 
       let html = `
         <table class="service-table">
@@ -975,12 +1019,14 @@
               <th>Total Bill</th>
               <th>Workshop Name</th>
               <th>Remarks</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>
       `;
 
       logs.forEach(log => {
+        const logId = log["Log ID"] || log.LogID || "";
         html += `
           <tr>
             <td>${formatDate(log["Service Date"] || log.ServiceDate)}</td>
@@ -990,6 +1036,9 @@
             <td>${log["Total Bill"] || log.TotalBill ? '₹' + escapeHTML(log["Total Bill"] || log.TotalBill) : '-'}</td>
             <td>${escapeHTML(log["Workshop Name"] || log.WorkshopName || "-")}</td>
             <td>${escapeHTML(log.Remarks || "-")}</td>
+            <td>
+              <button class="btn-delete-row" onclick="deleteServiceLogRow('${escapeJS(logId)}')">Delete</button>
+            </td>
           </tr>
         `;
       });
@@ -1020,6 +1069,15 @@
 
         renderVehicles(loadedVehicles);
         updateNotificationCount(loadedVehicles);
+
+        const currentTab = document.querySelector(".tab-content.active");
+        if (currentTab && currentTab.id === "tab-service") {
+          if (document.getElementById("serviceDetailsView").style.display === "block" && activeSelectedVehicle) {
+            openVehicleServiceLogs(activeSelectedVehicle);
+          } else {
+            renderServiceVehicleCards();
+          }
+        }
       } catch (err) {
         listContainer.innerHTML = `
           <div class="error-state">
