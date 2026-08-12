@@ -789,9 +789,6 @@
 
 <body>
 
-  <!-- =========================
-       HEADER
-       ========================= -->
   <header class="app-header">
     <div class="header-inner">
       <div class="header-left">
@@ -873,9 +870,6 @@
 
   </main>
 
-  <!-- =========================
-       BOTTOM NAV
-       ========================= -->
   <nav class="bottom-nav">
     <div class="nav-inner">
 
@@ -1009,7 +1003,6 @@
 
     /* =========================================================
        4. DATE PARSER
-       Supports common Google Sheets display formats.
        ========================================================= */
 
     function parseSheetDate(dateString) {
@@ -1110,7 +1103,7 @@
 
     function vehicleIcon(vehicle) {
 
-      const text = `${vehicle.Name || ""} ${vehicle.RegNumber || ""}`.toLowerCase();
+      const text = `${vehicle.Name || ""} ${vehicle.RegNumber || ""} ${vehicle.Model || ""}`.toLowerCase();
 
       if (
         text.includes("bike") ||
@@ -1118,7 +1111,8 @@
         text.includes("bullet") ||
         text.includes("classic") ||
         text.includes("jupiter") ||
-        text.includes("scooter")
+        text.includes("scooter") ||
+        text.includes("activa")
       ) {
         return "🏍";
       }
@@ -1173,7 +1167,7 @@
             </h2>
 
             <p class="vehicle-name">
-              ${escapeHTML(vehicle.Name || "")}
+              ${escapeHTML(vehicle.Name || "")} ${vehicle.Model ? '• ' + escapeHTML(vehicle.Model) : ''}
             </p>
 
           </div>
@@ -1253,46 +1247,31 @@
 
 
     /* =========================================================
-       10. LOAD VEHICLES
+       10. LOAD VEHICLES FROM GOOGLE SHEETS API
        ========================================================= */
 
     async function loadVehicles() {
 
-      const listContainer =
-        document.getElementById("vehicleList");
+      const listContainer = document.getElementById("vehicleList");
 
       try {
-
-        if (
-          !API_URL ||
-          API_URL === "https://script.google.com/macros/s/AKfycby8yWrbyX3mZqpoxeGU-PqsKX8ferIPMvdYL-jCLbZW3aHCATVcr6lS-vlSJjnxDMZkPA/exec"
-        ) {
-          /*
-           * Demo data lets you see the redesigned UI before
-           * connecting Google Apps Script.
-           */
-          renderVehicles(getDemoVehicles());
-          updateNotificationCount(getDemoVehicles());
-          return;
-        }
-
-        const response = await fetch(
-          `${API_URL}?action=getVehicles`
-        );
+        const response = await fetch(`${API_URL}?action=getVehicles`);
 
         if (!response.ok) {
-          throw new Error(
-            `Server returned ${response.status}`
-          );
+          throw new Error(`Server returned ${response.status}`);
         }
 
         const result = await response.json();
 
-        if (!result.success) {
-          throw new Error(result.message || "Unable to load vehicles.");
+        // Handle both raw array response and wrapped object response
+        let vehicles = [];
+        if (Array.isArray(result)) {
+          vehicles = result;
+        } else if (result && Array.isArray(result.vehicles)) {
+          vehicles = result.vehicles;
+        } else {
+          throw new Error(result.message || "Unable to parse vehicle data.");
         }
-
-        const vehicles = result.vehicles || [];
 
         renderVehicles(vehicles);
         updateNotificationCount(vehicles);
@@ -1316,8 +1295,7 @@
 
     function renderVehicles(vehicles) {
 
-      const listContainer =
-        document.getElementById("vehicleList");
+      const listContainer = document.getElementById("vehicleList");
 
       listContainer.innerHTML = "";
 
@@ -1332,16 +1310,10 @@
         return;
       }
 
-      /*
-       * The application is intended for four vehicles.
-       * If more are returned, all are still displayed.
-       */
       vehicles.forEach(vehicle => {
-
         listContainer.appendChild(
           createVehicleCard(vehicle)
         );
-
       });
     }
 
@@ -1369,8 +1341,7 @@
         ).length;
       });
 
-      const badge =
-        document.getElementById("notificationCount");
+      const badge = document.getElementById("notificationCount");
 
       badge.innerText = count > 99 ? "99+" : count;
       badge.style.display = count > 0 ? "grid" : "none";
@@ -1378,52 +1349,7 @@
 
 
     /* =========================================================
-       13. DEMO DATA
-       Remove/ignore this once API_URL is connected.
-       ========================================================= */
-
-    function getDemoVehicles() {
-
-      return [
-
-        {
-          Name: "Honda City",
-          RegNumber: "KL 07 CJ 1234",
-          NextServiceDate: "12 Aug 2026",
-          InsuranceExpiry: "25 Oct 2026",
-          PollutionExpiry: "18 Nov 2026"
-        },
-
-        {
-          Name: "Royal Enfield Classic 350",
-          RegNumber: "KL 07 DP 5678",
-          NextServiceDate: "18 Aug 2026",
-          InsuranceExpiry: "20 Aug 2026",
-          PollutionExpiry: "02 Sep 2026"
-        },
-
-        {
-          Name: "Mahindra XUV700",
-          RegNumber: "KL 07 EE 9012",
-          NextServiceDate: "05 Aug 2026",
-          InsuranceExpiry: "15 Aug 2026",
-          PollutionExpiry: "01 Aug 2026"
-        },
-
-        {
-          Name: "TVS Jupiter",
-          RegNumber: "KL 07 FS 3456",
-          NextServiceDate: "28 Aug 2026",
-          InsuranceExpiry: "05 Sep 2026",
-          PollutionExpiry: "30 Aug 2026"
-        }
-
-      ];
-    }
-
-
-    /* =========================================================
-       14. ACTIONS
+       13. ACTIONS
        ========================================================= */
 
     function addVehicle() {
@@ -1444,7 +1370,7 @@
 
 
     /* =========================================================
-       15. SAFETY HELPERS
+       14. SAFETY HELPERS
        ========================================================= */
 
     function escapeHTML(value) {
@@ -1466,7 +1392,7 @@
 
 
     /* =========================================================
-       16. INITIALIZE
+       15. INITIALIZE
        ========================================================= */
 
     loadVehicles();
