@@ -46,18 +46,10 @@
       padding-bottom: 86px;
     }
 
-    button, input, select, textarea {
-      font: inherit;
-    }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
 
-    button {
-      cursor: pointer;
-    }
-
-    /* =========================
-       TOP HEADER (FLUID)
-       ========================= */
-
+    /* TOP HEADER */
     .app-header {
       height: clamp(60px, 12vw, 80px);
       background: var(--navy);
@@ -79,11 +71,7 @@
       justify-content: space-between;
     }
 
-    .header-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
+    .header-left { display: flex; align-items: center; gap: 12px; }
 
     .menu-btn {
       width: 28px;
@@ -158,10 +146,7 @@
       border: 2px solid var(--navy);
     }
 
-    /* =========================
-       MAIN & INTRO (FLUID)
-       ========================= */
-
+    /* MAIN CONTAINER */
     .container {
       width: min(1180px, calc(100% - 24px));
       margin: 0 auto;
@@ -210,10 +195,7 @@
       margin-right: 4px;
     }
 
-    /* =========================
-       VEHICLE CARD (FLUID)
-       ========================= */
-
+    /* VEHICLE CARD */
     #vehicleList {
       display: grid;
       gap: 14px;
@@ -292,17 +274,18 @@
       line-height: 1;
     }
 
+    /* 3-LINE METRIC LAYOUT */
     .vehicle-details {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      padding: 4px 10px 14px 20px;
+      padding: 6px 10px 14px 20px;
     }
 
     .detail {
       min-width: 0;
       display: flex;
-      align-items: center;
-      gap: clamp(6px, 2vw, 12px);
+      flex-direction: column;
+      align-items: flex-start;
       padding: 0 clamp(4px, 1.5vw, 10px);
       border-right: 1px solid #d9dde5;
     }
@@ -310,15 +293,23 @@
     .detail:first-child { padding-left: 0; }
     .detail:last-child { border-right: 0; padding-right: 0; }
 
+    /* LINE 1: ICON + LABEL */
+    .detail-header {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-bottom: 2px;
+    }
+
     .detail-icon {
-      width: clamp(28px, 8vw, 42px);
-      height: clamp(28px, 8vw, 42px);
+      width: clamp(18px, 4.5vw, 24px);
+      height: clamp(18px, 4.5vw, 24px);
       border-radius: 50%;
       display: grid;
       place-items: center;
       background: var(--good-bg);
       color: var(--good);
-      font-size: clamp(13px, 3.5vw, 20px);
+      font-size: clamp(10px, 2.5vw, 13px);
       flex-shrink: 0;
     }
 
@@ -326,14 +317,15 @@
     .status-overdue .detail-icon { background: var(--overdue-bg); color: var(--overdue); }
 
     .detail-label {
-      margin: 0 0 2px;
+      margin: 0;
       font-size: clamp(9px, 2.5vw, 13px);
       color: #252b35;
       white-space: nowrap;
     }
 
+    /* LINE 2: DATE */
     .detail-date {
-      margin: 0;
+      margin: 2px 0 0;
       font-size: clamp(10px, 2.8vw, 14px);
       font-weight: 700;
       color: var(--good);
@@ -343,12 +335,13 @@
     .status-soon .detail-date { color: var(--soon); }
     .status-overdue .detail-date { color: var(--overdue); }
 
+    /* LINE 3: STATUS PILL */
     .status-pill {
       display: inline-flex;
       align-items: center;
       gap: 3px;
       width: max-content;
-      margin-top: 4px;
+      margin-top: 5px;
       padding: 3px 6px;
       border-radius: 12px;
       background: var(--good-bg);
@@ -372,10 +365,7 @@
       font-weight: 800;
     }
 
-    /* =========================
-       OTHER TABS & BOTTOM NAV
-       ========================= */
-
+    /* OTHER TABS & BOTTOM NAV */
     .tab-content { display: none; }
     .tab-content.active { display: block; }
 
@@ -491,7 +481,7 @@
       </div>
 
       <div id="vehicleList">
-        <div class="loader">Kindly wait till page initialise...</div>
+        <div class="loader">Loading vehicles from Google Sheets...</div>
       </div>
     </section>
 
@@ -664,30 +654,30 @@
 
         <div class="vehicle-details">
           <div class="detail">
-            <div class="detail-icon">🔧</div>
-            <div>
+            <div class="detail-header">
+              <div class="detail-icon">🔧</div>
               <p class="detail-label">Next Service</p>
-              <p class="detail-date">${formatDate(vehicle.NextServiceDate)}</p>
-              ${statusHTML(serviceStatus)}
             </div>
+            <p class="detail-date">${formatDate(vehicle.NextServiceDate)}</p>
+            ${statusHTML(serviceStatus)}
           </div>
 
           <div class="detail">
-            <div class="detail-icon">◆</div>
-            <div>
+            <div class="detail-header">
+              <div class="detail-icon">◆</div>
               <p class="detail-label">Insurance Expiry</p>
-              <p class="detail-date">${formatDate(vehicle.InsuranceExpiry)}</p>
-              ${statusHTML(insuranceStatus)}
             </div>
+            <p class="detail-date">${formatDate(vehicle.InsuranceExpiry)}</p>
+            ${statusHTML(insuranceStatus)}
           </div>
 
           <div class="detail">
-            <div class="detail-icon">🍃</div>
-            <div>
+            <div class="detail-header">
+              <div class="detail-icon">🍃</div>
               <p class="detail-label">Pollution Expiry</p>
-              <p class="detail-date">${formatDate(vehicle.PollutionExpiry)}</p>
-              ${statusHTML(pollutionStatus)}
             </div>
+            <p class="detail-date">${formatDate(vehicle.PollutionExpiry)}</p>
+            ${statusHTML(pollutionStatus)}
           </div>
         </div>
       `;
