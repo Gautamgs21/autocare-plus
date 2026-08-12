@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   
-  <!-- Mobile Web App Meta Tags -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#1e293b">
@@ -21,7 +20,6 @@
       padding-bottom: 90px;
     }
 
-    /* Fixed App Header */
     .app-header {
       position: sticky;
       top: 0;
@@ -42,7 +40,6 @@
       padding: 16px;
     }
 
-    /* Mobile Vehicle Card */
     .card {
       background: #ffffff;
       border-radius: 16px;
@@ -95,7 +92,6 @@
       font-weight: 600;
     }
 
-    /* Floating Add Button */
     .fab {
       position: fixed;
       bottom: 24px;
@@ -117,7 +113,6 @@
 
     .fab:active { transform: scale(0.96); }
 
-    /* Modal Form for Mobile */
     .modal {
       display: none;
       position: fixed;
@@ -195,17 +190,14 @@
 </head>
 <body>
 
-  <!-- Fixed App Bar -->
   <div class="app-header">🚗 CarCare+</div>
 
   <div class="container">
     <div id="vehicleList">Loading your vehicles...</div>
   </div>
 
-  <!-- Floating Add Button -->
   <button class="fab" onclick="openModal()">+ Add Vehicle</button>
 
-  <!-- Add Vehicle Mobile Sheet/Modal -->
   <div class="modal" id="addModal">
     <div class="modal-content">
       <div class="modal-header">
@@ -246,7 +238,7 @@
 
   <script>
     // PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL HERE:
-    const API_URL = "https://script.google.com/u/0/home/projects/1hgoEjGoMz8ln2HjDzzIcyexr68eLrTwEpNTo6LTMyQCgqOaa3nsZl5qL/edit";
+    const API_URL = "YOUR_WEB_APP_URL_HERE";
 
     function openModal() { document.getElementById('addModal').style.display = 'flex'; }
     function closeModal() { document.getElementById('addModal').style.display = 'none'; }
