@@ -187,14 +187,8 @@
       font-size: clamp(10px, 2.5vw, 13px); flex-shrink: 0;
     }
 
-    .status-soon .detail-icon { background: var(--soon-bg); color: var(--soon); }
-    .status-overdue .detail-icon { background: var(--overdue-bg); color: var(--overdue); }
-
     .detail-label { margin: 0; font-size: clamp(9px, 2.5vw, 13px); color: #252b35; white-space: nowrap; }
     .detail-date { margin: 2px 0 0; font-size: clamp(10px, 2.8vw, 14px); font-weight: 700; color: var(--good); white-space: nowrap; }
-
-    .status-soon .detail-date { color: var(--soon); }
-    .status-overdue .detail-date { color: var(--overdue); }
 
     .status-pill {
       display: inline-flex; align-items: center; justify-content: center; gap: 3px; width: max-content;
@@ -202,15 +196,34 @@
       font-size: clamp(8px, 2.4vw, 12px); font-weight: 600;
     }
 
-    .status-soon .status-pill { background: var(--soon-bg); color: #d97706; }
-    .status-overdue .status-pill { background: var(--overdue-bg); color: #dc2626; }
-
     .status-symbol {
       width: clamp(10px, 3vw, 14px); height: clamp(10px, 3vw, 14px); border-radius: 50%;
       display: grid; place-items: center; background: currentColor; color: #fff; font-size: clamp(6px, 1.8vw, 9px); font-weight: 800;
     }
 
-    /* MODAL POPUP FOR ADD VEHICLE */
+    /* INDIVIDUAL STATUS STATES */
+    .detail.status-expired .detail-icon { background: var(--overdue-bg); color: var(--overdue); }
+    .detail.status-expired .detail-date { color: var(--overdue); }
+    .detail.status-expired .status-pill { background: var(--overdue-bg); color: #dc2626; }
+
+    .detail.status-soon .detail-icon { background: var(--soon-bg); color: var(--soon); }
+    .detail.status-soon .detail-date { color: var(--soon); }
+    .detail.status-soon .status-pill { background: var(--soon-bg); color: #d97706; }
+
+    .detail.status-soon-blink .detail-icon { background: var(--soon-bg); color: var(--soon); }
+    .detail.status-soon-blink .detail-date { color: var(--soon); }
+    .detail.status-soon-blink .status-pill { 
+      background: var(--soon-bg); 
+      color: #d97706; 
+      animation: pulseBlink 1s infinite ease-in-out; 
+    }
+
+    @keyframes pulseBlink {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.35; transform: scale(0.95); }
+    }
+
+    /* CENTERED MODAL POPUP */
     .modal-overlay {
       display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(0,0,0,0.5); z-index: 2000; justify-content: center; align-items: center; padding: 16px;
@@ -221,7 +234,9 @@
       animation: popUp 0.2s ease-out;
     }
 
-    @keyframes popUp { from { transform: scale(0.85); opacity: 0; } to { transform: scale(1); opacity: 1; } 
+    @keyframes popUp { 
+      from { transform: scale(0.85); opacity: 0; } 
+      to { transform: scale(1); opacity: 1; } 
     }
 
     .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
@@ -510,6 +525,7 @@
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
+    /* UPDATED STATUS CALCULATION LOGIC */
     function getStatus(dateString) {
       if (!dateString) return { type: "unknown", label: "Unknown", symbol: "?" };
       const targetDate = parseSheetDate(dateString);
@@ -520,8 +536,23 @@
       targetDate.setHours(0, 0, 0, 0);
 
       const diffDays = Math.ceil((targetDate - today) / (1000 * 60 * 60 * 24));
-      if (diffDays < 0) return { type: "overdue", label: "Overdue", symbol: "×" };
-      if (diffDays <= 14) return { type: "soon", label: "Due Soon", symbol: "!" };
+
+      // 1. Past due date -> Expired (Red)
+      if (diffDays < 0) {
+        return { type: "expired", label: "Expired", symbol: "×" };
+      }
+
+      // 2. Next week (0 to 7 days) -> Due Soon (Orange + Blinking)
+      if (diffDays <= 7) {
+        return { type: "soon-blink", label: "Due Soon", symbol: "!" };
+      }
+
+      // 3. Within a month (8 to 30 days) -> Due Soon (Orange)
+      if (diffDays <= 30) {
+        return { type: "soon", label: "Due Soon", symbol: "!" };
+      }
+
+      // 4. After 1 month -> Good (Green)
       return { type: "good", label: "Good", symbol: "✓" };
     }
 
@@ -555,12 +586,11 @@
         getStatus(vehicle.InsuranceExpiry),
         getStatus(vehicle.PollutionExpiry)
       ];
-      if (statuses.some(s => s.type === "overdue")) return "overdue";
-      if (statuses.some(s => s.type === "soon")) return "soon";
+      if (statuses.some(s => s.type === "expired")) return "overdue";
+      if (statuses.some(s => s.type === "soon" || s.type === "soon-blink")) return "soon";
       return "good";
     }
 
-    /* DYNAMIC ICON LOGIC BASED ON VEHICLE TYPE OR NAME */
     function vehicleIcon(vehicle) {
       const type = String(vehicle.VehicleType || "").toLowerCase();
       if (type.includes("two")) return "🏍";
@@ -601,7 +631,7 @@
         </div>
 
         <div class="vehicle-details">
-          <div class="detail">
+          <div class="detail status-${serviceStatus.type}">
             <div class="detail-header">
               <div class="detail-icon">🔧</div>
               <p class="detail-label">Next Service</p>
@@ -610,7 +640,7 @@
             ${statusHTML(serviceStatus)}
           </div>
 
-          <div class="detail">
+          <div class="detail status-${insuranceStatus.type}">
             <div class="detail-header">
               <div class="detail-icon">◆</div>
               <p class="detail-label">Insurance Expiry</p>
@@ -619,7 +649,7 @@
             ${statusHTML(insuranceStatus)}
           </div>
 
-          <div class="detail">
+          <div class="detail status-${pollutionStatus.type}">
             <div class="detail-header">
               <div class="detail-icon">🍃</div>
               <p class="detail-label">Pollution Expiry</p>
@@ -677,7 +707,7 @@
           getStatus(vehicle.InsuranceExpiry),
           getStatus(vehicle.PollutionExpiry)
         ];
-        count += statuses.filter(s => s.type === "soon" || s.type === "overdue").length;
+        count += statuses.filter(s => s.type === "soon" || s.type === "soon-blink" || s.type === "expired").length;
       });
 
       const badge = document.getElementById("notificationCount");
