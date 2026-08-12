@@ -3,331 +3,1468 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>My Vehicles</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#10264d">
+  <title>CarCare+</title>
+
   <style>
-    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background-color: #f4f6f9;
-      margin: 0;
-      padding: 0;
-      color: #1e293b;
-      padding-bottom: 90px;
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
     }
 
-    /* Top Navigation Bar */
-    .top-bar {
-      background-color: #0d1b2a;
-      color: #ffffff;
+    :root {
+      --navy: #10264d;
+      --navy-2: #173562;
+      --text: #101828;
+      --muted: #667085;
+      --line: #e4e7ec;
+      --page: #f7f9fc;
+      --white: #ffffff;
+      --blue: #2563eb;
+
+      --good: #16a34a;
+      --good-bg: #eaf8ed;
+
+      --soon: #f59e0b;
+      --soon-bg: #fff6df;
+
+      --overdue: #ef1d25;
+      --overdue-bg: #ffebed;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      background: var(--page);
+      color: var(--text);
+      padding-bottom: 86px;
+    }
+
+    button, input, select, textarea {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    /* =========================
+       TOP HEADER
+       ========================= */
+
+    .app-header {
+      height: 104px;
+      background: var(--navy);
+      color: #fff;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      padding: 16px 20px;
+      padding: 0 42px;
       position: sticky;
       top: 0;
       z-index: 100;
     }
-    .top-bar h1 { font-size: 20px; font-weight: 700; margin: 0; flex-grow: 1; margin-left: 15px; }
-    .icon-btn { background: none; border: none; color: white; font-size: 22px; cursor: pointer; position: relative; }
-    .badge-count {
-      position: absolute;
-      top: -2px; right: -4px;
-      background: #ef4444;
-      color: white;
-      font-size: 10px;
-      font-weight: bold;
-      border-radius: 50%;
-      padding: 2px 5px;
-    }
 
-    .container { max-width: 500px; margin: 0 auto; padding: 16px; }
-
-    /* Overview Header */
-    .overview-header {
+    .header-inner {
+      width: 100%;
+      max-width: 1180px;
+      margin: 0 auto;
       display: flex;
+      align-items: center;
       justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
-    }
-    .greeting h2 { margin: 0; font-size: 22px; color: #0f172a; }
-    .greeting p { margin: 4px 0 0 0; color: #64748b; font-size: 13px; }
-    .btn-add {
-      background-color: #0d1b2a;
-      color: white;
-      border: none;
-      padding: 10px 14px;
-      border-radius: 8px;
-      font-weight: 600;
-      font-size: 13px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      cursor: pointer;
     }
 
-    /* Vehicle Cards */
-    .card {
-      background: #ffffff;
-      border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 16px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 38px;
+    }
+
+    .menu-btn {
+      width: 42px;
+      height: 42px;
+      padding: 6px 0;
+      border: 0;
+      background: transparent;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .menu-btn span {
+      display: block;
+      height: 4px;
+      border-radius: 4px;
+      background: #fff;
+      width: 38px;
+    }
+
+    .page-title {
+      font-size: 36px;
+      font-weight: 700;
+      letter-spacing: -0.7px;
+    }
+
+    .notification-btn {
       position: relative;
-      border-left: 5px solid #10b981; /* Default Green */
+      border: 0;
+      background: transparent;
+      color: white;
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
     }
-    .card.status-yellow { border-left-color: #f59e0b; }
-    .card.status-red { border-left-color: #ef4444; }
 
-    .card-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
+    .bell {
+      width: 29px;
+      height: 29px;
+      border: 3px solid white;
+      border-radius: 16px 16px 10px 10px;
+      position: relative;
+      border-bottom-width: 4px;
     }
-    .vehicle-info { display: flex; align-items: center; gap: 12px; }
-    .vehicle-avatar {
-      width: 42px; height: 42px;
-      border-radius: 10px;
-      background-color: #f1f5f9;
-      display: flex; align-items: center; justify-content: center;
+
+    .bell::before {
+      content: "";
+      position: absolute;
+      width: 9px;
+      height: 3px;
+      border-radius: 3px;
+      background: white;
+      left: 7px;
+      bottom: -8px;
+    }
+
+    .notification-count {
+      position: absolute;
+      top: -1px;
+      right: -1px;
+      min-width: 30px;
+      height: 30px;
+      padding: 0 7px;
+      border-radius: 20px;
+      background: #ef2a2a;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      display: grid;
+      place-items: center;
+      border: 2px solid var(--navy);
+    }
+
+    /* =========================
+       MAIN
+       ========================= */
+
+    .container {
+      width: min(1180px, calc(100% - 64px));
+      margin: 0 auto;
+      padding: 38px 0 40px;
+    }
+
+    .dashboard-intro {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 34px;
+    }
+
+    .intro-title {
+      margin: 0 0 6px;
+      font-size: 31px;
+      line-height: 1.1;
+      letter-spacing: -0.5px;
+    }
+
+    .intro-subtitle {
+      margin: 0;
+      color: #4b5563;
       font-size: 20px;
     }
-    .reg-number { font-size: 17px; font-weight: 800; color: #0f172a; margin: 0; }
-    .model-name { font-size: 13px; color: #64748b; margin: 2px 0 0 0; }
 
-    /* Grid of 3 Status Items */
-    .metrics-grid {
+    .add-vehicle-btn {
+      flex-shrink: 0;
+      border: 0;
+      background: var(--navy-2);
+      color: #fff;
+      border-radius: 16px;
+      min-height: 68px;
+      padding: 0 28px;
+      font-size: 20px;
+      font-weight: 600;
+      box-shadow: 0 6px 16px rgba(16, 38, 77, 0.14);
+    }
+
+    .add-vehicle-btn span {
+      font-size: 32px;
+      font-weight: 300;
+      vertical-align: -2px;
+      margin-right: 10px;
+    }
+
+    /* =========================
+       VEHICLE CARD
+       ========================= */
+
+    #vehicleList {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 8px;
-      border-top: 1px solid #f1f5f9;
-      padding-top: 12px;
+      gap: 18px;
     }
-    .metric-item { display: flex; flex-direction: column; align-items: flex-start; }
-    .metric-title-row { display: flex; align-items: center; gap: 4px; margin-bottom: 4px; }
-    .icon-circle {
-      width: 22px; height: 22px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 11px;
-    }
-    .metric-label { font-size: 10px; color: #64748b; font-weight: 500; }
-    .metric-date { font-size: 12px; font-weight: 700; margin-bottom: 6px; }
 
-    /* Pill Badges */
-    .pill {
+    .vehicle-card {
+      position: relative;
+      background: var(--white);
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid #edf0f5;
+      box-shadow: 0 5px 18px rgba(16, 24, 40, 0.055);
+    }
+
+    .vehicle-card::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 8px;
+      background: var(--good);
+    }
+
+    .vehicle-card.status-soon::before {
+      background: var(--soon);
+    }
+
+    .vehicle-card.status-overdue::before {
+      background: var(--overdue);
+    }
+
+    .vehicle-top {
+      padding: 26px 28px 20px 40px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .vehicle-icon {
+      width: 82px;
+      height: 82px;
+      border-radius: 17px;
+      background: #edf3ff;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      font-size: 42px;
+    }
+
+    .status-soon .vehicle-icon {
+      background: #fff6df;
+    }
+
+    .status-overdue .vehicle-icon {
+      background: #ffedef;
+    }
+
+    .vehicle-info {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .vehicle-reg {
+      margin: 0;
+      font-size: 28px;
+      line-height: 1.1;
+      font-weight: 750;
+      letter-spacing: 0.1px;
+    }
+
+    .vehicle-name {
+      margin: 7px 0 0;
+      font-size: 21px;
+      color: #374151;
+      font-weight: 400;
+    }
+
+    .more-btn {
+      border: 0;
+      background: transparent;
+      width: 38px;
+      height: 48px;
+      color: #4b5563;
+      font-size: 30px;
+      line-height: 1;
+    }
+
+    .vehicle-details {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      padding: 8px 28px 26px 40px;
+    }
+
+    .detail {
+      min-width: 0;
+      display: grid;
+      grid-template-columns: 72px 1fr;
+      align-items: center;
+      gap: 16px;
+      padding: 0 22px;
+      border-right: 1px solid #d9dde5;
+    }
+
+    .detail:first-child {
+      padding-left: 0;
+    }
+
+    .detail:last-child {
+      border-right: 0;
+      padding-right: 0;
+    }
+
+    .detail-icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: var(--good-bg);
+      color: var(--good);
+      font-size: 31px;
+      flex-shrink: 0;
+    }
+
+    .status-soon .detail-icon {
+      background: var(--soon-bg);
+      color: var(--soon);
+    }
+
+    .status-overdue .detail-icon {
+      background: var(--overdue-bg);
+      color: var(--overdue);
+    }
+
+    .detail-label {
+      margin: 0 0 7px;
+      font-size: 17px;
+      color: #252b35;
+      white-space: nowrap;
+    }
+
+    .detail-date {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--good);
+      white-space: nowrap;
+    }
+
+    .status-soon .detail-date {
+      color: var(--soon);
+    }
+
+    .status-overdue .detail-date {
+      color: var(--overdue);
+    }
+
+    .status-pill {
       display: inline-flex;
       align-items: center;
-      gap: 3px;
-      padding: 3px 8px;
-      border-radius: 12px;
-      font-size: 10px;
-      font-weight: 700;
+      gap: 7px;
+      width: max-content;
+      margin-top: 10px;
+      padding: 7px 13px;
+      border-radius: 20px;
+      background: var(--good-bg);
+      color: #15803d;
+      font-size: 16px;
+      font-weight: 600;
     }
 
-    /* Green Theme */
-    .theme-green .icon-circle { background-color: #d1fae5; color: #059669; }
-    .theme-green .metric-date { color: #059669; }
-    .theme-green .pill { background-color: #d1fae5; color: #059669; }
+    .status-soon .status-pill {
+      background: var(--soon-bg);
+      color: #d97706;
+    }
 
-    /* Yellow Theme */
-    .theme-yellow .icon-circle { background-color: #fef3c7; color: #d97706; }
-    .theme-yellow .metric-date { color: #d97706; }
-    .theme-yellow .pill { background-color: #fef3c7; color: #d97706; }
+    .status-overdue .status-pill {
+      background: var(--overdue-bg);
+      color: #dc2626;
+    }
 
-    /* Red Theme */
-    .theme-red .icon-circle { background-color: #fee2e2; color: #dc2626; }
-    .theme-red .metric-date { color: #dc2626; }
-    .theme-red .pill { background-color: #fee2e2; color: #dc2626; }
+    .status-symbol {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: currentColor;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 800;
+    }
 
-    /* Bottom Navigation Bar */
+    /* =========================
+       OTHER TABS
+       ========================= */
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .placeholder-card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 28px;
+      box-shadow: 0 4px 14px rgba(16, 24, 40, 0.04);
+    }
+
+    .placeholder-card h2 {
+      margin: 0 0 8px;
+      font-size: 23px;
+    }
+
+    .placeholder-card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 7px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #475467;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px 13px;
+      border: 1px solid #d0d5dd;
+      border-radius: 10px;
+      font-size: 15px;
+      background: #fff;
+      outline: none;
+    }
+
+    /* =========================
+       BOTTOM NAVIGATION
+       ========================= */
+
     .bottom-nav {
       position: fixed;
-      bottom: 0; left: 0; right: 0;
-      background: #ffffff;
-      border-top: 1px solid #e2e8f0;
-      display: flex;
-      justify-content: space-around;
-      padding: 10px 0 14px;
       z-index: 1000;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 88px;
+      background: rgba(255,255,255,0.98);
+      border-top: 1px solid #e4e7ec;
+      display: flex;
+      justify-content: center;
+      padding: 0 max(16px, env(safe-area-inset-left));
+      padding-right: max(16px, env(safe-area-inset-right));
+      box-shadow: 0 -4px 15px rgba(16, 24, 40, 0.04);
     }
+
+    .nav-inner {
+      width: min(900px, 100%);
+      display: flex;
+      align-items: stretch;
+      justify-content: space-around;
+    }
+
     .nav-item {
+      position: relative;
+      border: 0;
+      background: transparent;
+      color: #475467;
+      min-width: 110px;
+      flex: 1;
+      max-width: 180px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      font-size: 10px;
-      color: #64748b;
-      background: none;
-      border: none;
-      cursor: pointer;
+      justify-content: center;
+      gap: 5px;
+      font-size: 15px;
     }
-    .nav-item.active { color: #0d1b2a; font-weight: 700; }
-    .nav-icon { font-size: 20px; margin-bottom: 2px; }
+
+    .nav-item.active {
+      color: var(--navy);
+      font-weight: 600;
+    }
+
+    .nav-item.active::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 24%;
+      right: 24%;
+      height: 4px;
+      background: var(--blue);
+      border-radius: 0 0 5px 5px;
+    }
+
+    .nav-icon {
+      font-size: 27px;
+      line-height: 1;
+    }
+
+    /* =========================
+       LOADING / ERROR
+       ========================= */
+
+    .loader,
+    .empty-state,
+    .error-state {
+      text-align: center;
+      padding: 45px 20px;
+      color: var(--muted);
+    }
+
+    .error-state {
+      color: var(--overdue);
+    }
+
+    /* =========================
+       MOBILE
+       ========================= */
+
+    @media (max-width: 760px) {
+      body {
+        padding-bottom: 78px;
+      }
+
+      .app-header {
+        height: 78px;
+        padding: 0 18px;
+      }
+
+      .header-left {
+        gap: 17px;
+      }
+
+      .menu-btn {
+        width: 34px;
+        height: 32px;
+      }
+
+      .menu-btn span {
+        width: 31px;
+        height: 3px;
+      }
+
+      .page-title {
+        font-size: 25px;
+        letter-spacing: -0.3px;
+      }
+
+      .notification-btn {
+        width: 40px;
+        height: 40px;
+      }
+
+      .bell {
+        width: 24px;
+        height: 24px;
+      }
+
+      .notification-count {
+        min-width: 24px;
+        height: 24px;
+        font-size: 11px;
+      }
+
+      .container {
+        width: calc(100% - 28px);
+        padding: 24px 0 28px;
+      }
+
+      .dashboard-intro {
+        align-items: flex-start;
+        margin-bottom: 22px;
+        gap: 12px;
+      }
+
+      .intro-title {
+        font-size: 23px;
+      }
+
+      .intro-subtitle {
+        font-size: 15px;
+        line-height: 1.35;
+      }
+
+      .add-vehicle-btn {
+        min-height: 45px;
+        padding: 0 13px;
+        border-radius: 11px;
+        font-size: 13px;
+        white-space: nowrap;
+      }
+
+      .add-vehicle-btn span {
+        font-size: 22px;
+        margin-right: 4px;
+      }
+
+      #vehicleList {
+        gap: 14px;
+      }
+
+      .vehicle-card {
+        border-radius: 15px;
+      }
+
+      .vehicle-card::before {
+        width: 6px;
+      }
+
+      .vehicle-top {
+        padding: 18px 16px 13px 25px;
+        gap: 12px;
+      }
+
+      .vehicle-icon {
+        width: 58px;
+        height: 58px;
+        border-radius: 13px;
+        font-size: 28px;
+      }
+
+      .vehicle-reg {
+        font-size: 20px;
+      }
+
+      .vehicle-name {
+        font-size: 14px;
+        margin-top: 4px;
+      }
+
+      .more-btn {
+        width: 25px;
+        height: 38px;
+        font-size: 24px;
+      }
+
+      .vehicle-details {
+        padding: 4px 14px 17px 25px;
+      }
+
+      .detail {
+        grid-template-columns: 38px 1fr;
+        gap: 9px;
+        padding: 0 10px;
+      }
+
+      .detail:first-child {
+        padding-left: 0;
+      }
+
+      .detail:last-child {
+        padding-right: 0;
+      }
+
+      .detail-icon {
+        width: 38px;
+        height: 38px;
+        font-size: 18px;
+      }
+
+      .detail-label {
+        font-size: 11px;
+        margin-bottom: 4px;
+        white-space: normal;
+      }
+
+      .detail-date {
+        font-size: 12px;
+        white-space: normal;
+        line-height: 1.2;
+      }
+
+      .status-pill {
+        font-size: 10px;
+        padding: 4px 7px;
+        gap: 4px;
+        margin-top: 6px;
+      }
+
+      .status-symbol {
+        width: 14px;
+        height: 14px;
+        font-size: 8px;
+      }
+
+      .bottom-nav {
+        height: 78px;
+      }
+
+      .nav-item {
+        min-width: 0;
+        font-size: 10px;
+        gap: 3px;
+      }
+
+      .nav-icon {
+        font-size: 22px;
+      }
+
+      .nav-item.active::before {
+        left: 20%;
+        right: 20%;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .container {
+        width: calc(100% - 20px);
+      }
+
+      .dashboard-intro {
+        gap: 8px;
+      }
+
+      .intro-title {
+        font-size: 20px;
+      }
+
+      .intro-subtitle {
+        font-size: 13px;
+      }
+
+      .add-vehicle-btn {
+        padding: 0 9px;
+        font-size: 12px;
+      }
+
+      .vehicle-top {
+        padding-left: 20px;
+      }
+
+      .vehicle-details {
+        padding-left: 20px;
+        padding-right: 10px;
+      }
+
+      .detail {
+        grid-template-columns: 34px 1fr;
+        gap: 6px;
+        padding-left: 6px;
+        padding-right: 6px;
+      }
+
+      .detail-icon {
+        width: 34px;
+        height: 34px;
+        font-size: 16px;
+      }
+
+      .detail-label {
+        font-size: 10px;
+      }
+
+      .detail-date {
+        font-size: 11px;
+      }
+    }
   </style>
 </head>
+
 <body>
 
-  <!-- Top Navigation Header -->
-  <div class="top-bar">
-    <button class="icon-btn">☰</button>
-    <h1>My Vehicles</h1>
-    <button class="icon-btn">
-      🔔<span class="badge-count">2</span>
-    </button>
-  </div>
+  <!-- =========================
+       HEADER
+       ========================= -->
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="header-left">
+        <button class="menu-btn" onclick="toggleMenu()" aria-label="Menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
 
-  <div class="container">
-    <!-- Greeting & Action Header -->
-    <div class="overview-header">
-      <div class="greeting">
-        <h2>Hello! 👋</h2>
-        <p>Here’s an overview of your vehicles</p>
+        <div class="page-title" id="pageTitle">My Vehicles</div>
       </div>
-      <button class="btn-add" onclick="alert('Add vehicle feature coming next!')">
-        <span>+</span> Add Vehicle
+
+      <button class="notification-btn" onclick="showNotifications()" aria-label="Notifications">
+        <span class="bell"></span>
+        <span class="notification-count" id="notificationCount">0</span>
       </button>
     </div>
+  </header>
 
-    <!-- Vehicle Cards injected here -->
-    <div id="vehicleList">
-      <p style="text-align: center; color: #64748b; margin-top: 30px;">Loading your dashboard...</p>
+  <main class="container">
+
+    <!-- HOME -->
+    <section id="tab-home" class="tab-content active">
+
+      <div class="dashboard-intro">
+        <div>
+          <h1 class="intro-title">Hello! 👋</h1>
+          <p class="intro-subtitle">Here's an overview of your vehicles</p>
+        </div>
+
+        <button class="add-vehicle-btn" onclick="addVehicle()">
+          <span>+</span> Add Vehicle
+        </button>
+      </div>
+
+      <div id="vehicleList">
+        <div class="loader">Loading vehicles from Google Sheets...</div>
+      </div>
+
+    </section>
+
+    <!-- SERVICE -->
+    <section id="tab-service" class="tab-content">
+      <div class="placeholder-card">
+        <h2>Service</h2>
+        <p>Record completed services, repairs, service costs and the next service date for each vehicle.</p>
+      </div>
+    </section>
+
+    <!-- FUEL -->
+    <section id="tab-fuel" class="tab-content">
+      <div class="placeholder-card">
+        <h2>Fuel Log</h2>
+        <p>Track fuel fill-ups, quantity, price and fuel efficiency for your vehicles.</p>
+      </div>
+    </section>
+
+    <!-- HISTORY -->
+    <section id="tab-history" class="tab-content">
+      <div class="placeholder-card">
+        <h2>History</h2>
+        <p>Your service, fuel and maintenance history will appear here.</p>
+      </div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section id="tab-settings" class="tab-content">
+      <div class="placeholder-card">
+        <h2>Settings</h2>
+
+        <div class="form-group">
+          <label>Google Apps Script API URL</label>
+          <input type="text" value="Connected" readonly>
+        </div>
+
+        <p>Application settings and data connection options can be added here later.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- =========================
+       BOTTOM NAV
+       ========================= -->
+  <nav class="bottom-nav">
+    <div class="nav-inner">
+
+      <button class="nav-item active"
+              onclick="switchTab('home', 'My Vehicles', this)">
+        <span class="nav-icon">⌂</span>
+        Home
+      </button>
+
+      <button class="nav-item"
+              onclick="switchTab('service', 'Services', this)">
+        <span class="nav-icon">🔧</span>
+        Services
+      </button>
+
+      <button class="nav-item"
+              onclick="switchTab('fuel', 'Fuel', this)">
+        <span class="nav-icon">⛽</span>
+        Fuel
+      </button>
+
+      <button class="nav-item"
+              onclick="switchTab('history', 'History', this)">
+        <span class="nav-icon">▤</span>
+        History
+      </button>
+
+      <button class="nav-item"
+              onclick="switchTab('settings', 'Settings', this)">
+        <span class="nav-icon">⚙</span>
+        Settings
+      </button>
+
     </div>
-  </div>
-
-  <!-- Bottom Navigation -->
-  <div class="bottom-nav">
-    <button class="nav-item active">
-      <span class="nav-icon">🏠</span>
-      Home
-    </button>
-    <button class="nav-item">
-      <span class="nav-icon">🛠️</span>
-      Services
-    </button>
-    <button class="nav-item">
-      <span class="nav-icon">📄</span>
-      Documents
-    </button>
-    <button class="nav-item">
-      <span class="nav-icon">⏱️</span>
-      Reports
-    </button>
-  </div>
+  </nav>
 
   <script>
-    // PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL HERE:
+    /* =========================================================
+       1. GOOGLE APPS SCRIPT URL
+       ========================================================= */
+
     const API_URL = "YOUR_WEB_APP_URL_HERE";
 
-    // Helper function to turn timestamp into a clean date (e.g. "12 Aug 2026")
-    function formatDate(dateString) {
-      if (!dateString) return 'N/A';
-      const date = new Date(dateString);
-      if (isNaN(date.getTime())) return dateString; // fallback if already text
 
-      const day = String(date.getDate()).padStart(2, '0');
-      const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-      const month = months[date.getMonth()];
+    /* =========================================================
+       2. TAB NAVIGATION
+       ========================================================= */
+
+    function switchTab(tabId, title, element) {
+      document.querySelectorAll(".tab-content")
+        .forEach(tab => tab.classList.remove("active"));
+
+      document.querySelectorAll(".nav-item")
+        .forEach(nav => nav.classList.remove("active"));
+
+      const selectedTab = document.getElementById("tab-" + tabId);
+
+      if (selectedTab) {
+        selectedTab.classList.add("active");
+      }
+
+      if (element) {
+        element.classList.add("active");
+      }
+
+      document.getElementById("pageTitle").innerText = title;
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+    }
+
+
+    /* =========================================================
+       3. STATUS CALCULATION
+       ========================================================= */
+
+    function getStatus(dateString) {
+
+      if (!dateString) {
+        return {
+          type: "unknown",
+          label: "Unknown",
+          symbol: "?"
+        };
+      }
+
+      const targetDate = parseSheetDate(dateString);
+
+      if (!targetDate || isNaN(targetDate.getTime())) {
+        return {
+          type: "unknown",
+          label: "Invalid Date",
+          symbol: "?"
+        };
+      }
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      targetDate.setHours(0, 0, 0, 0);
+
+      const diffDays = Math.ceil(
+        (targetDate - today) / (1000 * 60 * 60 * 24)
+      );
+
+      if (diffDays < 0) {
+        return {
+          type: "overdue",
+          label: "Overdue",
+          symbol: "×"
+        };
+      }
+
+      if (diffDays <= 14) {
+        return {
+          type: "soon",
+          label: "Due Soon",
+          symbol: "!"
+        };
+      }
+
+      return {
+        type: "good",
+        label: "Good",
+        symbol: "✓"
+      };
+    }
+
+
+    /* =========================================================
+       4. DATE PARSER
+       Supports common Google Sheets display formats.
+       ========================================================= */
+
+    function parseSheetDate(dateString) {
+
+      if (!dateString) return null;
+
+      if (dateString instanceof Date) {
+        return new Date(dateString);
+      }
+
+      const value = String(dateString).trim();
+
+      // DD-MM-YYYY / DD.MM.YYYY / DD/MM/YYYY
+      let match = value.match(
+        /^(\d{1,2})[-./](\d{1,2})[-./](\d{4})$/
+      );
+
+      if (match) {
+        const day = Number(match[1]);
+        const month = Number(match[2]) - 1;
+        const year = Number(match[3]);
+
+        return new Date(year, month, day);
+      }
+
+      // YYYY-MM-DD
+      match = value.match(
+        /^(\d{4})[-./](\d{1,2})[-./](\d{1,2})$/
+      );
+
+      if (match) {
+        return new Date(
+          Number(match[1]),
+          Number(match[2]) - 1,
+          Number(match[3])
+        );
+      }
+
+      const parsed = new Date(value);
+
+      return isNaN(parsed.getTime()) ? null : parsed;
+    }
+
+
+    /* =========================================================
+       5. DISPLAY DATE
+       ========================================================= */
+
+    function formatDate(dateString) {
+
+      const date = parseSheetDate(dateString);
+
+      if (!date || isNaN(date.getTime())) {
+        return dateString || "N/A";
+      }
+
+      const day = String(date.getDate()).padStart(2, "0");
+
+      const monthNames = [
+        "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+      ];
+
+      const month = monthNames[date.getMonth()];
       const year = date.getFullYear();
 
       return `${day} ${month} ${year}`;
     }
 
-    function getStatusData(dateString) {
-      if (!dateString) return { badgeText: "Unknown", colorClass: "theme-green", level: 1 };
-      
-      const targetDate = new Date(dateString);
-      if (isNaN(targetDate.getTime())) return { badgeText: "Invalid", colorClass: "theme-green", level: 1 };
 
-      const today = new Date();
-      today.setHours(0,0,0,0);
-      const diffDays = Math.ceil((targetDate - today) / (1000 * 60 * 60 * 24));
+    /* =========================================================
+       6. VEHICLE CARD STATUS
+       ========================================================= */
 
-      if (diffDays < 0) {
-        return { badgeText: "✖ Overdue", colorClass: "theme-red", level: 3 };
-      } else if (diffDays <= 14) {
-        return { badgeText: "⚠️ Due Soon", colorClass: "theme-yellow", level: 2 };
-      } else {
-        return { badgeText: "✔ Good", colorClass: "theme-green", level: 1 };
+    function getOverallStatus(vehicle) {
+
+      const statuses = [
+        getStatus(vehicle.NextServiceDate),
+        getStatus(vehicle.InsuranceExpiry),
+        getStatus(vehicle.PollutionExpiry)
+      ];
+
+      if (statuses.some(s => s.type === "overdue")) {
+        return "overdue";
       }
+
+      if (statuses.some(s => s.type === "soon")) {
+        return "soon";
+      }
+
+      return "good";
     }
 
-    async function loadDashboard() {
-      const listContainer = document.getElementById("vehicleList");
+
+    /* =========================================================
+       7. ICONS
+       ========================================================= */
+
+    function vehicleIcon(vehicle) {
+
+      const text = `${vehicle.Name || ""} ${vehicle.RegNumber || ""}`.toLowerCase();
+
+      if (
+        text.includes("bike") ||
+        text.includes("motorcycle") ||
+        text.includes("bullet") ||
+        text.includes("classic") ||
+        text.includes("jupiter") ||
+        text.includes("scooter")
+      ) {
+        return "🏍";
+      }
+
+      return "🚗";
+    }
+
+
+    /* =========================================================
+       8. STATUS HTML
+       ========================================================= */
+
+    function statusHTML(status) {
+
+      return `
+        <div class="status-pill">
+          <span class="status-symbol">${status.symbol}</span>
+          ${status.label}
+        </div>
+      `;
+    }
+
+
+    /* =========================================================
+       9. CREATE VEHICLE CARD
+       ========================================================= */
+
+    function createVehicleCard(vehicle) {
+
+      const serviceStatus = getStatus(vehicle.NextServiceDate);
+      const insuranceStatus = getStatus(vehicle.InsuranceExpiry);
+      const pollutionStatus = getStatus(vehicle.PollutionExpiry);
+
+      const overallStatus = getOverallStatus(vehicle);
+
+      const card = document.createElement("article");
+
+      card.className = `vehicle-card status-${overallStatus}`;
+
+      card.innerHTML = `
+
+        <div class="vehicle-top">
+
+          <div class="vehicle-icon">
+            ${vehicleIcon(vehicle)}
+          </div>
+
+          <div class="vehicle-info">
+
+            <h2 class="vehicle-reg">
+              ${escapeHTML(vehicle.RegNumber || "Vehicle")}
+            </h2>
+
+            <p class="vehicle-name">
+              ${escapeHTML(vehicle.Name || "")}
+            </p>
+
+          </div>
+
+          <button
+            class="more-btn"
+            onclick="vehicleMenu('${escapeJS(vehicle.RegNumber || "")}')"
+            aria-label="Vehicle options">
+            ⋮
+          </button>
+
+        </div>
+
+        <div class="vehicle-details">
+
+          <!-- SERVICE -->
+
+          <div class="detail">
+
+            <div class="detail-icon">🔧</div>
+
+            <div>
+              <p class="detail-label">Next Service</p>
+
+              <p class="detail-date">
+                ${formatDate(vehicle.NextServiceDate)}
+              </p>
+
+              ${statusHTML(serviceStatus)}
+            </div>
+
+          </div>
+
+
+          <!-- INSURANCE -->
+
+          <div class="detail">
+
+            <div class="detail-icon">◆</div>
+
+            <div>
+              <p class="detail-label">Insurance Expiry</p>
+
+              <p class="detail-date">
+                ${formatDate(vehicle.InsuranceExpiry)}
+              </p>
+
+              ${statusHTML(insuranceStatus)}
+            </div>
+
+          </div>
+
+
+          <!-- POLLUTION -->
+
+          <div class="detail">
+
+            <div class="detail-icon">🍃</div>
+
+            <div>
+              <p class="detail-label">Pollution Expiry</p>
+
+              <p class="detail-date">
+                ${formatDate(vehicle.PollutionExpiry)}
+              </p>
+
+              ${statusHTML(pollutionStatus)}
+            </div>
+
+          </div>
+
+        </div>
+      `;
+
+      return card;
+    }
+
+
+    /* =========================================================
+       10. LOAD VEHICLES
+       ========================================================= */
+
+    async function loadVehicles() {
+
+      const listContainer =
+        document.getElementById("vehicleList");
+
       try {
-        const response = await fetch(`${API_URL}?action=getVehicles`);
-        const vehicles = await response.json();
 
-        listContainer.innerHTML = "";
-
-        if (!vehicles || vehicles.length === 0) {
-          listContainer.innerHTML = "<p style='text-align:center; color:#64748b;'>No vehicles found.</p>";
+        if (
+          !API_URL ||
+          API_URL === "YOUR_WEB_APP_URL_HERE"
+        ) {
+          /*
+           * Demo data lets you see the redesigned UI before
+           * connecting Google Apps Script.
+           */
+          renderVehicles(getDemoVehicles());
+          updateNotificationCount(getDemoVehicles());
           return;
         }
 
-        vehicles.forEach(vehicle => {
-          const serviceStat = getStatusData(vehicle.NextServiceDate);
-          const insuranceStat = getStatusData(vehicle.InsuranceExpiry);
-          const pollutionStat = getStatusData(vehicle.PollutionExpiry);
+        const response = await fetch(
+          `${API_URL}?action=getVehicles`
+        );
 
-          // Determine card left border color based on worst status
-          const worstLevel = Math.max(serviceStat.level, insuranceStat.level, pollutionStat.level);
-          let borderClass = "";
-          if (worstLevel === 3) borderClass = "status-red";
-          else if (worstLevel === 2) borderClass = "status-yellow";
+        if (!response.ok) {
+          throw new Error(
+            `Server returned ${response.status}`
+          );
+        }
 
-          const card = document.createElement("div");
-          card.className = `card ${borderClass}`;
-          card.innerHTML = `
-            <div class="card-top">
-              <div class="vehicle-info">
-                <div class="vehicle-avatar">🚗</div>
-                <div>
-                  <h3 class="reg-number">${vehicle.RegNumber}</h3>
-                  <p class="model-name">${vehicle.Name} ${vehicle.Model ? '• ' + vehicle.Model : ''}</p>
-                </div>
-              </div>
-              <div style="color:#94a3b8; font-weight:bold; cursor:pointer;">⋮</div>
-            </div>
+        const vehicles = await response.json();
 
-            <div class="metrics-grid">
-              <!-- Next Service -->
-              <div class="metric-item ${serviceStat.colorClass}">
-                <div class="metric-title-row">
-                  <div class="icon-circle">🔧</div>
-                  <span class="metric-label">Next Service</span>
-                </div>
-                <div class="metric-date">${formatDate(vehicle.NextServiceDate)}</div>
-                <div class="pill">${serviceStat.badgeText}</div>
-              </div>
+        renderVehicles(vehicles || []);
+        updateNotificationCount(vehicles || []);
 
-              <!-- Insurance -->
-              <div class="metric-item ${insuranceStat.colorClass}">
-                <div class="metric-title-row">
-                  <div class="icon-circle">🛡️</div>
-                  <span class="metric-label">Insurance Expiry</span>
-                </div>
-                <div class="metric-date">${formatDate(vehicle.InsuranceExpiry)}</div>
-                <div class="pill">${insuranceStat.badgeText}</div>
-              </div>
-
-              <!-- Pollution -->
-              <div class="metric-item ${pollutionStat.colorClass}">
-                <div class="metric-title-row">
-                  <div class="icon-circle">🍃</div>
-                  <span class="metric-label">Pollution Expiry</span>
-                </div>
-                <div class="metric-date">${formatDate(vehicle.PollutionExpiry)}</div>
-                <div class="pill">${pollutionStat.badgeText}</div>
-              </div>
-            </div>
-          `;
-          listContainer.appendChild(card);
-        });
       } catch (err) {
-        listContainer.innerHTML = `<p style="text-align:center; color:#ef4444;">Failed to load data from Google Sheets.</p>`;
+
+        listContainer.innerHTML = `
+          <div class="error-state">
+            <strong>Unable to load vehicles</strong>
+            <br>
+            <small>${escapeHTML(err.message)}</small>
+          </div>
+        `;
       }
     }
 
-    loadDashboard();
+
+    /* =========================================================
+       11. RENDER VEHICLES
+       ========================================================= */
+
+    function renderVehicles(vehicles) {
+
+      const listContainer =
+        document.getElementById("vehicleList");
+
+      listContainer.innerHTML = "";
+
+      if (!vehicles || vehicles.length === 0) {
+
+        listContainer.innerHTML = `
+          <div class="empty-state">
+            No vehicles added yet.
+          </div>
+        `;
+
+        return;
+      }
+
+      /*
+       * The application is intended for four vehicles.
+       * If more are returned, all are still displayed.
+       */
+      vehicles.forEach(vehicle => {
+
+        listContainer.appendChild(
+          createVehicleCard(vehicle)
+        );
+
+      });
+    }
+
+
+    /* =========================================================
+       12. NOTIFICATION COUNT
+       ========================================================= */
+
+    function updateNotificationCount(vehicles) {
+
+      let count = 0;
+
+      vehicles.forEach(vehicle => {
+
+        const statuses = [
+          getStatus(vehicle.NextServiceDate),
+          getStatus(vehicle.InsuranceExpiry),
+          getStatus(vehicle.PollutionExpiry)
+        ];
+
+        count += statuses.filter(
+          status =>
+            status.type === "soon" ||
+            status.type === "overdue"
+        ).length;
+      });
+
+      const badge =
+        document.getElementById("notificationCount");
+
+      badge.innerText = count > 99 ? "99+" : count;
+      badge.style.display = count > 0 ? "grid" : "none";
+    }
+
+
+    /* =========================================================
+       13. DEMO DATA
+       Remove/ignore this once API_URL is connected.
+       ========================================================= */
+
+    function getDemoVehicles() {
+
+      return [
+
+        {
+          Name: "Honda City",
+          RegNumber: "KL 07 CJ 1234",
+          NextServiceDate: "12 Aug 2026",
+          InsuranceExpiry: "25 Oct 2026",
+          PollutionExpiry: "18 Nov 2026"
+        },
+
+        {
+          Name: "Royal Enfield Classic 350",
+          RegNumber: "KL 07 DP 5678",
+          NextServiceDate: "18 Aug 2026",
+          InsuranceExpiry: "20 Aug 2026",
+          PollutionExpiry: "02 Sep 2026"
+        },
+
+        {
+          Name: "Mahindra XUV700",
+          RegNumber: "KL 07 EE 9012",
+          NextServiceDate: "05 Aug 2026",
+          InsuranceExpiry: "15 Aug 2026",
+          PollutionExpiry: "01 Aug 2026"
+        },
+
+        {
+          Name: "TVS Jupiter",
+          RegNumber: "KL 07 FS 3456",
+          NextServiceDate: "28 Aug 2026",
+          InsuranceExpiry: "05 Sep 2026",
+          PollutionExpiry: "30 Aug 2026"
+        }
+
+      ];
+    }
+
+
+    /* =========================================================
+       14. ACTIONS
+       ========================================================= */
+
+    function addVehicle() {
+      alert("Add Vehicle form coming soon!");
+    }
+
+    function vehicleMenu(regNumber) {
+      alert(`Vehicle options: ${regNumber}`);
+    }
+
+    function showNotifications() {
+      alert("Vehicle reminders will appear here.");
+    }
+
+    function toggleMenu() {
+      alert("Menu coming soon.");
+    }
+
+
+    /* =========================================================
+       15. SAFETY HELPERS
+       ========================================================= */
+
+    function escapeHTML(value) {
+
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function escapeJS(value) {
+
+      return String(value)
+        .replace(/\\/g, "\\\\")
+        .replace(/'/g, "\\'");
+    }
+
+
+    /* =========================================================
+       16. INITIALIZE
+       ========================================================= */
+
+    loadVehicles();
+
   </script>
 
 </body>
