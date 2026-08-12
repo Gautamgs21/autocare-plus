@@ -274,7 +274,7 @@
       line-height: 1;
     }
 
-    /* 3-LINE METRIC LAYOUT */
+    /* CENTERED 3-LINE METRIC LAYOUT */
     .vehicle-details {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -285,7 +285,8 @@
       min-width: 0;
       display: flex;
       flex-direction: column;
-      align-items: flex-start;
+      align-items: center; /* CENTER ALIGN HORIZONTALLY */
+      text-align: center; /* CENTER TEXT */
       padding: 0 clamp(4px, 1.5vw, 10px);
       border-right: 1px solid #d9dde5;
     }
@@ -293,12 +294,14 @@
     .detail:first-child { padding-left: 0; }
     .detail:last-child { border-right: 0; padding-right: 0; }
 
-    /* LINE 1: ICON + LABEL */
+    /* LINE 1: ICON + LABEL CENTERED */
     .detail-header {
       display: flex;
       align-items: center;
+      justify-content: center; /* CENTER ICON + LABEL TOGETHER */
       gap: 5px;
       margin-bottom: 2px;
+      width: 100%;
     }
 
     .detail-icon {
@@ -323,7 +326,7 @@
       white-space: nowrap;
     }
 
-    /* LINE 2: DATE */
+    /* LINE 2: DATE CENTERED */
     .detail-date {
       margin: 2px 0 0;
       font-size: clamp(10px, 2.8vw, 14px);
@@ -335,10 +338,11 @@
     .status-soon .detail-date { color: var(--soon); }
     .status-overdue .detail-date { color: var(--overdue); }
 
-    /* LINE 3: STATUS PILL */
+    /* LINE 3: STATUS PILL CENTERED */
     .status-pill {
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: 3px;
       width: max-content;
       margin-top: 5px;
@@ -481,7 +485,7 @@
       </div>
 
       <div id="vehicleList">
-        <div class="loader">Loading vehicles from Google Sheets...</div>
+        <div class="loader">Please wait till app initialise...</div>
       </div>
     </section>
 
