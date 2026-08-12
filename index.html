@@ -141,7 +141,7 @@
     .add-vehicle-btn span { font-size: clamp(16px, 4vw, 22px); font-weight: 300; vertical-align: -1px; margin-right: 4px; }
 
     /* VEHICLE CARD */
-    #vehicleList { display: grid; gap: 14px; }
+    #vehicleList, .service-card-grid { display: grid; gap: 14px; }
 
     .vehicle-card {
       position: relative; background: var(--white); border-radius: 14px;
@@ -220,7 +220,68 @@
       50% { opacity: 0.35; transform: scale(0.95); }
     }
 
-    /* ACTION SHEET (SIDE OPTIONS DRAWER) */
+    /* SERVICE LOG TABLE & VIEWS */
+    .service-vehicle-card {
+      background: var(--white);
+      border-radius: 14px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      border: 1px solid #edf0f5;
+      box-shadow: 0 4px 14px rgba(16, 24, 40, 0.04);
+      cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+
+    .service-vehicle-card:active { transform: scale(0.98); }
+
+    .btn-back {
+      background: #e2e8f0;
+      border: 0;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #334155;
+      margin-bottom: 14px;
+    }
+
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+      background: var(--white);
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      box-shadow: 0 4px 14px rgba(16, 24, 40, 0.04);
+    }
+
+    .service-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: clamp(12px, 3vw, 14px);
+      min-width: 700px;
+    }
+
+    .service-table th {
+      background: var(--navy);
+      color: white;
+      padding: 12px 14px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .service-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      color: var(--text);
+    }
+
+    .service-table tr:last-child td { border-bottom: none; }
+    .service-table tr:nth-child(even) { background: #f8fafc; }
+
+    /* ACTION SHEET */
     .action-sheet-overlay {
       display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(0,0,0,0.4); z-index: 3000; justify-content: flex-end; align-items: flex-end;
@@ -244,14 +305,14 @@
     .action-btn.delete { color: #dc2626; background: #fef2f2; }
     .action-btn.cancel { background: #e2e8f0; color: #475569; margin-bottom: 0; margin-top: 4px; }
 
-    /* MODAL POPUP FOR ADD/EDIT VEHICLE */
+    /* MODAL POPUPS */
     .modal-overlay {
       display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(0,0,0,0.5); z-index: 2000; justify-content: center; align-items: center; padding: 16px;
     }
 
     .modal-card {
-      background: #fff; width: 100%; max-width: 440px; border-radius: 16px; padding: 20px; max-height: 85vh; overflow-y: auto;
+      background: #fff; width: 100%; max-width: 460px; border-radius: 16px; padding: 20px; max-height: 85vh; overflow-y: auto;
       animation: popUp 0.2s ease-out;
     }
 
@@ -263,7 +324,7 @@
 
     .form-group { margin-bottom: 12px; }
     .form-group label { display: block; margin-bottom: 4px; font-size: clamp(11px, 2.8vw, 13px); font-weight: 600; color: #475467; }
-    .form-group input, .form-group select {
+    .form-group input, .form-group select, .form-group textarea {
       width: 100%; max-width: 100%; padding: 10px; border: 1px solid #d0d5dd; border-radius: 8px;
       font-size: clamp(13px, 3.2vw, 15px); background: #fff; outline: none; -webkit-appearance: none;
       appearance: none; box-sizing: border-box;
@@ -361,9 +422,23 @@
 
     <!-- SERVICE TAB -->
     <section id="tab-service" class="tab-content">
-      <div class="placeholder-card">
-        <h2>Service</h2>
-        <p>Record completed services, repairs, service costs and the next service date for each vehicle.</p>
+      <div class="dashboard-intro">
+        <div>
+          <h1 class="intro-title">Service Logs</h1>
+          <p class="intro-subtitle">Select a vehicle to view its history</p>
+        </div>
+
+        <button class="add-vehicle-btn" onclick="openAddServiceModal()">
+          <span>+</span> Add Service Log
+        </button>
+      </div>
+
+      <div id="serviceVehicleList" class="service-card-grid"></div>
+      
+      <div id="serviceDetailsView" style="display: none;">
+        <button class="btn-back" onclick="showServiceVehicleList()">← Back to Vehicles</button>
+        <h2 id="selectedVehicleTitle" style="font-size: 18px; margin-bottom: 12px;"></h2>
+        <div id="serviceLogsTableContainer" class="table-container"></div>
       </div>
     </section>
 
@@ -396,7 +471,7 @@
 
   </main>
 
-  <!-- ACTION SHEET OVERLAY (OPTIONS MENU) -->
+  <!-- ACTION SHEET OVERLAY -->
   <div class="action-sheet-overlay" id="actionSheet">
     <div class="action-sheet">
       <div class="action-title" id="actionSheetTitle">Vehicle Options</div>
@@ -406,7 +481,7 @@
     </div>
   </div>
 
-  <!-- ADD/EDIT VEHICLE MODAL POPUP -->
+  <!-- ADD/EDIT VEHICLE MODAL -->
   <div class="modal-overlay" id="addModal">
     <div class="modal-card">
       <div class="modal-header">
@@ -474,6 +549,68 @@
     </div>
   </div>
 
+  <!-- ADD SERVICE LOG MODAL -->
+  <div class="modal-overlay" id="addServiceModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Record Service Log</h3>
+        <button class="btn-close" onclick="closeAddServiceModal()">✕</button>
+      </div>
+
+      <form id="addServiceForm">
+        <div class="form-group">
+          <label>Choose Vehicle</label>
+          <select id="log_vehicleId" required></select>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Service Date</label>
+            <input type="date" id="log_serviceDate" required>
+          </div>
+          <div class="form-group">
+            <label>Service Type</label>
+            <select id="log_serviceType" required>
+              <option value="General Service">General Service</option>
+              <option value="Oil Change">Oil Change</option>
+              <option value="Repair / Parts Replacement">Repair / Replacement</option>
+              <option value="Periodic Maintenance">Periodic Maintenance</option>
+              <option value="Inspection / Tuning">Inspection / Tuning</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Odometer Reading (km)</label>
+            <input type="number" id="log_odometer" placeholder="e.g. 45000">
+          </div>
+          <div class="form-group">
+            <label>Total Bill (₹)</label>
+            <input type="number" id="log_bill" placeholder="e.g. 3500">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Work Carried Out</label>
+          <textarea id="log_work" rows="2" placeholder="e.g. Engine oil replaced, brake pad cleaning"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Workshop Name</label>
+          <input type="text" id="log_workshop" placeholder="e.g. Popular Hyundai / Local Garage">
+        </div>
+
+        <div class="form-group">
+          <label>Remarks</label>
+          <input type="text" id="log_remarks" placeholder="Optional notes">
+        </div>
+
+        <button type="submit" class="btn-submit" id="saveLogBtn">Save Service Log</button>
+      </form>
+    </div>
+  </div>
+
   <!-- BOTTOM NAVIGATION -->
   <nav class="bottom-nav">
     <div class="nav-inner">
@@ -508,6 +645,7 @@
     const API_URL = "https://script.google.com/macros/s/AKfycby8yWrbyX3mZqpoxeGU-PqsKX8ferIPMvdYL-jCLbZW3aHCATVcr6lS-vlSJjnxDMZkPA/exec";
 
     let loadedVehicles = [];
+    let loadedServiceLogs = [];
     let activeSelectedVehicle = null;
 
     /* SPLASH SCREEN LOGIC */
@@ -544,7 +682,7 @@
       }, 300);
     }
 
-    /* MODAL & ACTION SHEET LOGIC */
+    /* MODALS & ACTION SHEET */
     function openAddModal(isEdit = false) { 
       document.getElementById("modalFormTitle").innerText = isEdit ? "Edit Vehicle" : "Add New Vehicle";
       if (!isEdit) {
@@ -554,6 +692,29 @@
       document.getElementById("addModal").style.display = "flex"; 
     }
     function closeAddModal() { document.getElementById("addModal").style.display = "none"; }
+
+    function openAddServiceModal() {
+      const select = document.getElementById("log_vehicleId");
+      select.innerHTML = "";
+      if (loadedVehicles.length === 0) {
+        alert("Please add a vehicle first.");
+        return;
+      }
+      loadedVehicles.forEach(v => {
+        const opt = document.createElement("option");
+        opt.value = v.VehicleID || v.RegNumber;
+        opt.innerText = `${v.RegNumber} (${v.Name || "Vehicle"})`;
+        select.appendChild(opt);
+      });
+
+      document.getElementById("addServiceForm").reset();
+      document.getElementById("log_serviceDate").value = formatDateForInput(new Date());
+      document.getElementById("addServiceModal").style.display = "flex";
+    }
+
+    function closeAddServiceModal() {
+      document.getElementById("addServiceModal").style.display = "none";
+    }
 
     function openActionSheet(regNumber) {
       activeSelectedVehicle = loadedVehicles.find(v => String(v.RegNumber) === String(regNumber));
@@ -618,6 +779,10 @@
 
       document.getElementById("pageTitle").innerText = title;
       window.scrollTo({ top: 0, behavior: "smooth" });
+
+      if (tabId === "service") {
+        showServiceVehicleList();
+      }
     }
 
     function getStatus(dateString) {
@@ -752,23 +917,113 @@
       return card;
     }
 
+    /* RENDER VEHICLES ON SERVICE TAB */
+    function renderServiceVehicleCards() {
+      const container = document.getElementById("serviceVehicleList");
+      container.innerHTML = "";
+
+      if (!loadedVehicles || loadedVehicles.length === 0) {
+        container.innerHTML = `<div class="empty-state">No vehicles available.</div>`;
+        return;
+      }
+
+      loadedVehicles.forEach(v => {
+        const card = document.createElement("div");
+        card.className = "service-vehicle-card";
+        card.onclick = () => openVehicleServiceLogs(v);
+        card.innerHTML = `
+          <div class="vehicle-icon">${vehicleIcon(v)}</div>
+          <div class="vehicle-info">
+            <h2 class="vehicle-reg">${escapeHTML(v.RegNumber || "Vehicle")}</h2>
+            <p class="vehicle-name">${v.Model ? escapeHTML(v.Model) + ' ' : ''}${escapeHTML(v.Name || "")}</p>
+          </div>
+          <div style="color: var(--muted); font-size: 20px;">›</div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function showServiceVehicleList() {
+      document.getElementById("serviceVehicleList").style.display = "grid";
+      document.getElementById("serviceDetailsView").style.display = "none";
+      renderServiceVehicleCards();
+    }
+
+    function openVehicleServiceLogs(vehicle) {
+      document.getElementById("serviceVehicleList").style.display = "none";
+      document.getElementById("serviceDetailsView").style.display = "block";
+      document.getElementById("selectedVehicleTitle").innerText = `${vehicleIcon(vehicle)} ${vehicle.RegNumber} - ${vehicle.Name || ""} (${vehicle.Model || ""})`;
+
+      const container = document.getElementById("serviceLogsTableContainer");
+      const vId = String(vehicle.VehicleID || vehicle.RegNumber);
+
+      const logs = loadedServiceLogs.filter(log => String(log.VehicleID) === vId || String(log.VehicleID) === String(vehicle.RegNumber));
+
+      if (logs.length === 0) {
+        container.innerHTML = `<div class="empty-state">No service logs found for this vehicle.</div>`;
+        return;
+      }
+
+      let html = `
+        <table class="service-table">
+          <thead>
+            <tr>
+              <th>Service Date</th>
+              <th>Service Type</th>
+              <th>Odometer</th>
+              <th>Work Carried Out</th>
+              <th>Total Bill</th>
+              <th>Workshop Name</th>
+              <th>Remarks</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+
+      logs.forEach(log => {
+        html += `
+          <tr>
+            <td>${formatDate(log["Service Date"] || log.ServiceDate)}</td>
+            <td><strong>${escapeHTML(log["Service Type"] || log.ServiceType || "")}</strong></td>
+            <td>${log["Odometer Reading"] || log.OdometerReading ? escapeHTML(log["Odometer Reading"] || log.OdometerReading) + ' km' : '-'}</td>
+            <td>${escapeHTML(log["Work Carried Out"] || log.WorkCarriedOut || "-")}</td>
+            <td>${log["Total Bill"] || log.TotalBill ? '₹' + escapeHTML(log["Total Bill"] || log.TotalBill) : '-'}</td>
+            <td>${escapeHTML(log["Workshop Name"] || log.WorkshopName || "-")}</td>
+            <td>${escapeHTML(log.Remarks || "-")}</td>
+          </tr>
+        `;
+      });
+
+      html += `</tbody></table>`;
+      container.innerHTML = html;
+    }
+
     async function loadVehicles() {
       startProgress();
       const listContainer = document.getElementById("vehicleList");
 
       try {
-        const response = await fetch(`${API_URL}?action=getVehicles`);
-        if (!response.ok) throw new Error(`Server returned ${response.status}`);
+        const [vResp, sResp] = await Promise.all([
+          fetch(`${API_URL}?action=getVehicles`),
+          fetch(`${API_URL}?action=getServiceLogs`)
+        ]);
 
-        const result = await response.json();
-        loadedVehicles = Array.isArray(result) ? result : (result && Array.isArray(result.vehicles) ? result.vehicles : []);
-        
+        if (!vResp.ok) throw new Error(`Server returned ${vResp.status}`);
+
+        const vResult = await vResp.json();
+        loadedVehicles = Array.isArray(vResult) ? vResult : (vResult && Array.isArray(vResult.vehicles) ? vResult.vehicles : []);
+
+        if (sResp.ok) {
+          const sResult = await sResp.json();
+          loadedServiceLogs = Array.isArray(sResult) ? sResult : [];
+        }
+
         renderVehicles(loadedVehicles);
         updateNotificationCount(loadedVehicles);
       } catch (err) {
         listContainer.innerHTML = `
           <div class="error-state">
-            <strong>Unable to load vehicles</strong><br>
+            <strong>Unable to load data</strong><br>
             <small>${escapeHTML(err.message)}</small>
           </div>
         `;
@@ -842,6 +1097,43 @@
         alert("Failed to save vehicle: " + err.message);
       } finally {
         saveBtn.innerText = "Save Vehicle";
+        saveBtn.disabled = false;
+      }
+    });
+
+    /* SUBMIT NEW SERVICE LOG */
+    document.getElementById("addServiceForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const saveBtn = document.getElementById("saveLogBtn");
+      saveBtn.innerText = "Saving...";
+      saveBtn.disabled = true;
+
+      const payload = {
+        action: "addServiceLog",
+        LogID: Date.now(),
+        VehicleID: document.getElementById("log_vehicleId").value,
+        ServiceDate: document.getElementById("log_serviceDate").value,
+        ServiceType: document.getElementById("log_serviceType").value,
+        OdometerReading: document.getElementById("log_odometer").value,
+        WorkCarriedOut: document.getElementById("log_work").value,
+        TotalBill: document.getElementById("log_bill").value,
+        WorkshopName: document.getElementById("log_workshop").value,
+        Remarks: document.getElementById("log_remarks").value
+      };
+
+      try {
+        await fetch(API_URL, {
+          method: "POST",
+          body: JSON.stringify(payload)
+        });
+
+        document.getElementById("addServiceForm").reset();
+        closeAddServiceModal();
+        loadVehicles();
+      } catch (err) {
+        alert("Failed to save service log: " + err.message);
+      } finally {
+        saveBtn.innerText = "Save Service Log";
         saveBtn.disabled = false;
       }
     });
