@@ -1,1 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CarCare+</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f4f6f8; margin: 0; padding: 20px; color: #333; }
+    h1 { text-align: center; color: #1a252f; }
+    .container { max-width: 600px; margin: 0 auto; }
+    .card { background: white; border-radius: 10px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+    .card h3 { margin: 0 0 10px 0; color: #2c3e50; }
+    .status-item { display: flex; justify-content: space-between; margin: 5px 0; font-size: 14px; }
+    .btn { background: #3498db; color: white; border: none; padding: 10px 15px; border-radius: 5px; width: 100%; cursor: pointer; font-size: 16px; margin-top: 10px; }
+    .btn:hover { background: #2980b9; }
+    form { background: white; padding: 15px; border-radius: 10px; margin-bottom: 20px; }
+    form input { width: 100%; padding: 8px; margin: 6px 0 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+  </style>
+</head>
+<body>
 
+  <div class="container">
+    <h1>🚗 CarCare+</h1>
+
+    <!-- Form to Add a New Vehicle -->
+    <form id="vehicleForm">
+      <h3>Add New Vehicle</h3>
+      <input type="text" id="name" placeholder="Vehicle Nickname (e.g., Family Car)" required>
+      <input type="text" id="regNumber" placeholder="Registration No. (e.g., KL-01-AB-1234)" required>
+      <input type="date" id="nextServiceDate" required>
+      <input type="date" id="insuranceExpiry" required>
+      <input type="date" id="pollutionExpiry" required>
+      <button type="submit" class="btn">Save Vehicle</button>
+    </form>
+
+    <!-- Vehicle Cards Container -->
+    <h2>Your Vehicles</h2>
+    <div id="vehicleList">Loading vehicles...</div>
+  </div>
+
+  <script>
+    // PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL HERE:
+    const API_URL = "1hgoEjGoMz8ln2HjDzzIcyexr68eLrTwEpNTo6LTMyQCgqOaa3nsZl5qL";
+
+    // Helper function to check status indicator
+    function getStatusBadge(dateString) {
+      if (!dateString) return "❓ Unknown";
+      const targetDate = new Date(dateString);
+      const today = new Date();
+      const diffDays = Math.ceil((targetDate - today) / (1000 * 60 * 60 * 24));
+
+      if (diffDays < 0) return "❌ Overdue";
+      if (diffDays <= 7) return "⚠️ Due Soon";
+      return "✅ Good";
+    }
+
+    // Fetch vehicles from Google Sheets backend
+    async function loadVehicles() {
+      const response = await fetch(`${API_URL}?action=getVehicles`);
+      const vehicles = await response.json();
+      
+      const listContainer = document.getElementById("vehicleList");
+      listContainer.innerHTML = "";
+
+      if (vehicles.length === 0) {
+        listContainer.innerHTML = "<p>No vehicles added yet.</p>";
+        return;
+      }
+
+      vehicles.forEach(vehicle => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+          <h3>${vehicle.Name} (${vehicle.RegNumber})</h3>
+          <div class="status-item"><span>Next Service:</span> <strong>${getStatusBadge(vehicle.NextServiceDate)}</strong></div>
+          <div class="status-item"><span>Insurance:</span> <strong>${getStatusBadge(vehicle.InsuranceExpiry)}</strong></div>
+          <div class="status-item"><span>Pollution (PUC):</span> <strong>${getStatusBadge(vehicle.PollutionExpiry)}</strong></div>
+        `;
+        listContainer.appendChild(card);
+      });
+    }
+
+    // Submit form to save a vehicle to Google Sheets
+    document.getElementById("vehicleForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const newVehicle = {
+        action: "addVehicle",
+        VehicleID: Date.now(),
+        Name: document.getElementById("name").value,
+        RegNumber: document.getElementById("regNumber").value,
+        Model: "",
+        Year: "",
+        NextServiceDate: document.getElementById("nextServiceDate").value,
+        InsuranceExpiry: document.getElementById("insuranceExpiry").value,
+        PollutionExpiry: document.getElementById("pollutionExpiry").value,
+        RemindersOn: true
+      };
+
+      await fetch(API_URL, {
+        method: "POST",
+        body: JSON.stringify(newVehicle)
+      });
+
+      document.getElementById("vehicleForm").reset();
+      loadVehicles();
+    });
+
+    // Initial Load
+    loadVehicles();
+  </script>
+</body>
+</html>
