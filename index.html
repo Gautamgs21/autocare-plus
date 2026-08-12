@@ -215,7 +215,21 @@
 
   <script>
     // PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL HERE:
-    const API_URL = "https://script.google.com/macros/s/AKfycby8yWrbyX3mZqpoxeGU-PqsKX8ferIPMvdYL-jCLbZW3aHCATVcr6lS-vlSJjnxDMZkPA/exec";
+    const API_URL = "YOUR_WEB_APP_URL_HERE";
+
+    // Helper function to turn timestamp into a clean date (e.g. "12 Aug 2026")
+    function formatDate(dateString) {
+      if (!dateString) return 'N/A';
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return dateString; // fallback if already text
+
+      const day = String(date.getDate()).padStart(2, '0');
+      const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      const month = months[date.getMonth()];
+      const year = date.getFullYear();
+
+      return `${day} ${month} ${year}`;
+    }
 
     function getStatusData(dateString) {
       if (!dateString) return { badgeText: "Unknown", colorClass: "theme-green", level: 1 };
@@ -281,7 +295,7 @@
                   <div class="icon-circle">🔧</div>
                   <span class="metric-label">Next Service</span>
                 </div>
-                <div class="metric-date">${vehicle.NextServiceDate || 'N/A'}</div>
+                <div class="metric-date">${formatDate(vehicle.NextServiceDate)}</div>
                 <div class="pill">${serviceStat.badgeText}</div>
               </div>
 
@@ -291,7 +305,7 @@
                   <div class="icon-circle">🛡️</div>
                   <span class="metric-label">Insurance Expiry</span>
                 </div>
-                <div class="metric-date">${vehicle.InsuranceExpiry || 'N/A'}</div>
+                <div class="metric-date">${formatDate(vehicle.InsuranceExpiry)}</div>
                 <div class="pill">${insuranceStat.badgeText}</div>
               </div>
 
@@ -301,7 +315,7 @@
                   <div class="icon-circle">🍃</div>
                   <span class="metric-label">Pollution Expiry</span>
                 </div>
-                <div class="metric-date">${vehicle.PollutionExpiry || 'N/A'}</div>
+                <div class="metric-date">${formatDate(vehicle.PollutionExpiry)}</div>
                 <div class="pill">${pollutionStat.badgeText}</div>
               </div>
             </div>
@@ -315,5 +329,6 @@
 
     loadDashboard();
   </script>
+
 </body>
 </html>
