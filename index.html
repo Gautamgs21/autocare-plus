@@ -188,9 +188,24 @@
     .vehicle-top { padding: 14px 14px 10px 20px; display: flex; align-items: center; gap: 12px; }
 
     .vehicle-icon {
-      width: clamp(44px, 12vw, 64px); height: clamp(44px, 12vw, 64px);
-      border-radius: 12px; background: #edf3ff; display: grid; place-items: center;
-      flex-shrink: 0; font-size: clamp(22px, 6vw, 32px);
+      width: clamp(44px, 12vw, 64px);
+      height: clamp(44px, 12vw, 64px);
+      border-radius: 12px;
+      background: #edf3ff;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      color: var(--navy);
+    }
+    
+    .vehicle-icon svg {
+      width: 55%;
+      height: 55%;
+      stroke: currentColor;
+      stroke-width: 1.8;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
     }
 
     .status-soon .vehicle-icon { background: #fff6df; }
@@ -482,7 +497,7 @@
   <!-- SPLASH OVERLAY -->
   <div id="splashScreen">
     <div class="splash-content">
-      <div class="splash-logo">🚗 CarCare+</div>
+      <div class="splash-logo">AutoCare+</div>
       <div class="progress-bar-bg">
         <div id="progressBar" class="progress-bar-fill"></div>
       </div>
@@ -1042,14 +1057,39 @@
 
     function vehicleIcon(vehicle) {
       const type = String(vehicle.VehicleType || "").toLowerCase();
-      if (type.includes("two")) return "🏍";
-      if (type.includes("four")) return "🚗";
-
       const text = `${vehicle.Name || ""} ${vehicle.RegNumber || ""} ${vehicle.Model || ""}`.toLowerCase();
-      if (text.includes("bike") || text.includes("motorcycle") || text.includes("bullet") || text.includes("classic") || text.includes("jupiter") || text.includes("scooter") || text.includes("activa")) {
-        return "🏍";
+      
+      const isTwoWheeler = type.includes("two") || 
+                           text.includes("bike") || 
+                           text.includes("motorcycle") || 
+                           text.includes("bullet") || 
+                           text.includes("classic") || 
+                           text.includes("jupiter") || 
+                           text.includes("scooter") || 
+                           text.includes("activa");
+    
+      if (isTwoWheeler) {
+        // Premium Bike/Scooter SVG Icon
+        return `
+          <svg viewBox="0 0 24 24">
+            <circle cx="5.5" cy="17.5" r="3.5"></circle>
+            <circle cx="18.5" cy="17.5" r="3.5"></circle>
+            <path d="M15 6h2l1.5 3"></path>
+            <path d="M9 17.5 11.5 10H16l2.5 7.5"></path>
+            <path d="M5.5 17.5 8 10h3"></path>
+          </svg>
+        `;
       }
-      return "🚗";
+    
+      // Premium Car SVG Icon
+      return `
+        <svg viewBox="0 0 24 24">
+          <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H7c-.7 0-1.3.3-1.8.7C4.3 8.6 3 10 3 10s-2.7.6-4.5 1.1C.7 11.3 0 12.1 0 13v3c0 .6.4 1 1 1h2"></path>
+          <circle cx="6" cy="17" r="2"></circle>
+          <circle cx="18" cy="17" r="2"></circle>
+          <path d="M4 10h16"></path>
+        </svg>
+      `;
     }
 
     function statusHTML(status) {
