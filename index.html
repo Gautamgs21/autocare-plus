@@ -1113,11 +1113,16 @@
       document.getElementById("selectedVehicleTitle").innerText = `${vehicleIcon(vehicle)} ${vehicle.RegNumber} - ${vehicle.Name || ""} (${vehicle.Model || ""})`;
 
       const container = document.getElementById("serviceLogsTableContainer");
-      const vId = String(vehicle.VehicleID || vehicle.RegNumber).trim();
+      
+      const targetVehicleId = String(vehicle.VehicleID || "").replace("'", "").trim();
+      const targetRegNumber = String(vehicle.RegNumber || "").trim().toLowerCase();
 
+      // Flexible matching against VehicleID or RegNumber
       let logs = loadedServiceLogs.filter(log => {
-        const logVehicleId = String(log.VehicleID || log["VehicleID"] || "").trim();
-        return logVehicleId === vId || logVehicleId === String(vehicle.RegNumber).trim();
+        const logVId = String(log.VehicleID || log["VehicleID"] || "").replace("'", "").trim();
+        const logReg = String(log["Registration Number"] || log.RegNumber || "").trim().toLowerCase();
+        
+        return logVId === targetVehicleId || logVId.toLowerCase() === targetRegNumber || (logReg && logReg === targetRegNumber);
       });
 
       if (logs.length === 0) {
@@ -1150,7 +1155,7 @@
       `;
 
       logs.forEach(log => {
-        const logId = String(log["Log ID"] || log.LogID || log["LogID"] || "").trim();
+        const logId = String(log["Log ID"] || log.LogID || log["LogID"] || "").replace("'", "").trim();
         html += `
           <tr>
             <td>${formatDate(log["Service Date"] || log.ServiceDate)}</td>
