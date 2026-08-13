@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="theme-color" content="#10264d">
-  <title>AutoCare+</title>
+  <title>CarCare+</title>
 
   <style>
     * {
@@ -103,6 +103,33 @@
     .menu-btn span { display: block; height: 3px; border-radius: 3px; background: #fff; width: 100%; }
 
     .page-title { font-size: clamp(18px, 5vw, 26px); font-weight: 700; letter-spacing: -0.3px; }
+
+    /* PREMIUM REFRESH BUTTON */
+    .btn-refresh {
+      border: 0;
+      background: rgba(255, 255, 255, 0.12);
+      color: white;
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      transition: background 0.2s ease, transform 0.15s ease;
+    }
+
+    .btn-refresh:active {
+      background: rgba(255, 255, 255, 0.25);
+      transform: scale(0.92);
+    }
+
+    .btn-refresh.spinning svg {
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
 
     .header-action-btn {
       border: 0; background: transparent; color: white;
@@ -278,19 +305,30 @@
       padding: 12px 14px;
       border-bottom: 1px solid var(--line);
       color: var(--text);
+      vertical-align: middle;
     }
 
     .service-table tr:last-child td { border-bottom: none; }
     .service-table tr:nth-child(even) { background: #f8fafc; }
 
-    .btn-delete-row {
+    /* PREMIUM TRASH DELETE BUTTON */
+    .btn-delete-icon {
       background: #fef2f2;
-      border: 1px solid #fca5a5;
-      color: #dc2626;
-      border-radius: 6px;
-      padding: 4px 8px;
-      font-size: 12px;
+      border: 1px solid #fee2e2;
+      color: #ef4444;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .btn-delete-icon:active {
+      background: #fee2e2;
+      transform: scale(0.92);
     }
 
     /* ACTION SHEET */
@@ -389,7 +427,7 @@
   <!-- SPLASH OVERLAY -->
   <div id="splashScreen">
     <div class="splash-content">
-      <div class="splash-logo">🚗 AutoCare+</div>
+      <div class="splash-logo">🚗 CarCare+</div>
       <div class="progress-bar-bg">
         <div id="progressBar" class="progress-bar-fill"></div>
       </div>
@@ -408,7 +446,13 @@
       </div>
 
       <div class="header-right">
-        <button class="header-action-btn" onclick="loadVehicles()" title="Refresh Data" aria-label="Refresh">🔄</button>
+        <!-- PREMIUM REFRESH BUTTON -->
+        <button class="btn-refresh" id="refreshBtn" onclick="triggerManualRefresh()" aria-label="Refresh Data" title="Refresh">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21.5 2v6h-6M2.13 15.57a10 10 0 1 0 0.57-8.38l5.67-5.67"/>
+          </svg>
+        </button>
+
         <button class="header-action-btn" onclick="showNotifications()" aria-label="Notifications">
           <span class="bell"></span>
           <span class="notification-count" id="notificationCount">0</span>
@@ -697,6 +741,14 @@
       }, 300);
     }
 
+    /* REFRESH FUNCTIONALITY */
+    async function triggerManualRefresh() {
+      const btn = document.getElementById("refreshBtn");
+      if (btn) btn.classList.add("spinning");
+      await loadVehicles();
+      if (btn) btn.classList.remove("spinning");
+    }
+
     /* MODALS & ACTION SHEET */
     function openAddModal(isEdit = false) { 
       document.getElementById("modalFormTitle").innerText = isEdit ? "Edit Vehicle" : "Add New Vehicle";
@@ -777,31 +829,44 @@
             RegNumber: activeSelectedVehicle.RegNumber
           })
         });
-        loadVehicles();
+        await loadVehicles();
       } catch (err) {
         alert("Failed to delete vehicle: " + err.message);
         finishProgress();
       }
     }
 
+    /* DELETE INDIVIDUAL SERVICE LOG ROW */
     async function deleteServiceLogRow(logId) {
+      if (!logId || logId === "undefined") {
+        alert("Cannot delete: Missing Log ID for this record.");
+        return;
+      }
       if (!confirm("Are you sure you want to delete this service record?")) return;
+
       startProgress();
 
       try {
-        await fetch(API_URL, {
+        const response = await fetch(API_URL, {
           method: "POST",
           body: JSON.stringify({
             action: "deleteServiceLog",
             LogID: logId
           })
         });
+
+        const result = await response.json();
+        if (result.status === "error") {
+          throw new Error(result.message || "Deletion failed on backend");
+        }
+
         await loadVehicles();
         if (activeSelectedVehicle) {
           openVehicleServiceLogs(activeSelectedVehicle);
         }
       } catch (err) {
         alert("Failed to delete service log: " + err.message);
+      } finally {
         finishProgress();
       }
     }
@@ -1001,7 +1066,7 @@
         return;
       }
 
-      // SORT: Latest service on top
+      // SORT: Latest service date on top
       logs.sort((a, b) => {
         const dateA = parseSheetDate(a["Service Date"] || a.ServiceDate) || 0;
         const dateB = parseSheetDate(b["Service Date"] || b.ServiceDate) || 0;
@@ -1019,7 +1084,7 @@
               <th>Total Bill</th>
               <th>Workshop Name</th>
               <th>Remarks</th>
-              <th>Action</th>
+              <th style="text-align: center;">Action</th>
             </tr>
           </thead>
           <tbody>
@@ -1036,8 +1101,16 @@
             <td>${log["Total Bill"] || log.TotalBill ? '₹' + escapeHTML(log["Total Bill"] || log.TotalBill) : '-'}</td>
             <td>${escapeHTML(log["Workshop Name"] || log.WorkshopName || "-")}</td>
             <td>${escapeHTML(log.Remarks || "-")}</td>
-            <td>
-              <button class="btn-delete-row" onclick="deleteServiceLogRow('${escapeJS(logId)}')">Delete</button>
+            <td style="text-align: center;">
+              <!-- PREMIUM TRASH ICON BUTTON -->
+              <button class="btn-delete-icon" onclick="deleteServiceLogRow('${escapeJS(logId)}')" title="Delete Record" aria-label="Delete">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                  <line x1="10" y1="11" x2="10" y2="17"></line>
+                  <line x1="14" y1="11" x2="14" y2="17"></line>
+                </svg>
+              </button>
             </td>
           </tr>
         `;
@@ -1150,7 +1223,7 @@
 
         document.getElementById("addVehicleForm").reset();
         closeAddModal();
-        loadVehicles();
+        await loadVehicles();
       } catch (err) {
         alert("Failed to save vehicle: " + err.message);
       } finally {
@@ -1187,7 +1260,7 @@
 
         document.getElementById("addServiceForm").reset();
         closeAddServiceModal();
-        loadVehicles();
+        await loadVehicles();
       } catch (err) {
         alert("Failed to save service log: " + err.message);
       } finally {
