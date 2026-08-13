@@ -104,7 +104,6 @@
 
     .page-title { font-size: clamp(18px, 5vw, 26px); font-weight: 700; letter-spacing: -0.3px; }
 
-    /* PREMIUM HEADER ACTION BUTTONS */
     .header-action-btn {
       border: 0; 
       background: rgba(255, 255, 255, 0.08); 
@@ -315,7 +314,7 @@
     .service-table tr:last-child td { border-bottom: none; }
     .service-table tr:nth-child(even) { background: #f8fafc; }
 
-    /* PREMIUM TRASH ICON BUTTON */
+    /* TRASH BUTTON */
     .btn-trash-icon {
       border: 0;
       background: #fef2f2;
@@ -343,7 +342,7 @@
       stroke-linejoin: round;
     }
 
-    /* TOAST NOTIFICATION POPUP */
+    /* TOAST NOTIFICATION */
     #toastContainer {
       position: fixed;
       bottom: 80px;
@@ -497,7 +496,6 @@
       </div>
 
       <div class="header-right">
-        <!-- PREMIUM REFRESH BUTTON WITH ROTATING SVG -->
         <button class="header-action-btn" id="refreshBtn" onclick="handleRefresh()" title="Refresh Data" aria-label="Refresh">
           <svg class="icon-svg" id="refreshIcon" viewBox="0 0 24 24">
             <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3L21.5 8M22 12.5a10 10 0 0 1-18.8 4.2L2.5 16"/>
@@ -758,7 +756,7 @@
     let loadedServiceLogs = [];
     let activeSelectedVehicle = null;
 
-    /* TOAST NOTIFICATIONS */
+    /* TOAST NOTIFICATION */
     function showToast(message, type = "normal") {
       const container = document.getElementById("toastContainer");
       const toast = document.createElement("div");
@@ -840,7 +838,7 @@
       }
       loadedVehicles.forEach(v => {
         const opt = document.createElement("option");
-        opt.value = v.VehicleID || v.RegNumber;
+        opt.value = String(v.VehicleID || v.RegNumber);
         opt.innerText = `${v.RegNumber} (${v.Name || "Vehicle"})`;
         select.appendChild(opt);
       });
@@ -897,8 +895,8 @@
           method: "POST",
           body: JSON.stringify({
             action: "deleteVehicle",
-            VehicleID: activeSelectedVehicle.VehicleID,
-            RegNumber: activeSelectedVehicle.RegNumber
+            VehicleID: String(activeSelectedVehicle.VehicleID),
+            RegNumber: String(activeSelectedVehicle.RegNumber)
           })
         });
         await loadVehicles();
@@ -918,13 +916,10 @@
           method: "POST",
           body: JSON.stringify({
             action: "deleteServiceLog",
-            LogID: logId
+            LogID: String(logId)
           })
         });
         await loadVehicles();
-        if (activeSelectedVehicle) {
-          openVehicleServiceLogs(activeSelectedVehicle);
-        }
         showToast("Service log deleted", "success");
       } catch (err) {
         showToast("Failed to delete service log", "error");
@@ -1118,16 +1113,19 @@
       document.getElementById("selectedVehicleTitle").innerText = `${vehicleIcon(vehicle)} ${vehicle.RegNumber} - ${vehicle.Name || ""} (${vehicle.Model || ""})`;
 
       const container = document.getElementById("serviceLogsTableContainer");
-      const vId = String(vehicle.VehicleID || vehicle.RegNumber);
+      const vId = String(vehicle.VehicleID || vehicle.RegNumber).trim();
 
-      let logs = loadedServiceLogs.filter(log => String(log.VehicleID) === vId || String(log.VehicleID) === String(vehicle.RegNumber));
+      let logs = loadedServiceLogs.filter(log => {
+        const logVehicleId = String(log.VehicleID || log["VehicleID"] || "").trim();
+        return logVehicleId === vId || logVehicleId === String(vehicle.RegNumber).trim();
+      });
 
       if (logs.length === 0) {
         container.innerHTML = `<div class="empty-state">No service logs found for this vehicle.</div>`;
         return;
       }
 
-      // SORT: Latest service on top
+      // SORT: Latest service date on top
       logs.sort((a, b) => {
         const dateA = parseSheetDate(a["Service Date"] || a.ServiceDate) || 0;
         const dateB = parseSheetDate(b["Service Date"] || b.ServiceDate) || 0;
@@ -1152,7 +1150,7 @@
       `;
 
       logs.forEach(log => {
-        const logId = log["Log ID"] || log.LogID || "";
+        const logId = String(log["Log ID"] || log.LogID || log["LogID"] || "").trim();
         html += `
           <tr>
             <td>${formatDate(log["Service Date"] || log.ServiceDate)}</td>
@@ -1262,7 +1260,7 @@
 
       const payload = {
         action: isEdit ? "editVehicle" : "addVehicle",
-        VehicleID: vehicleId || Date.now(),
+        VehicleID: String(vehicleId || ("VEH-" + Date.now())),
         Name: document.getElementById("add_name").value,
         RegNumber: document.getElementById("add_reg").value,
         VehicleType: document.getElementById("add_type").value,
@@ -1301,8 +1299,8 @@
 
       const payload = {
         action: "addServiceLog",
-        LogID: Date.now(),
-        VehicleID: document.getElementById("log_vehicleId").value,
+        LogID: "LOG-" + Date.now(),
+        VehicleID: String(document.getElementById("log_vehicleId").value),
         ServiceDate: document.getElementById("log_serviceDate").value,
         ServiceType: document.getElementById("log_serviceType").value,
         OdometerReading: document.getElementById("log_odometer").value,
