@@ -104,50 +104,55 @@
 
     .page-title { font-size: clamp(18px, 5vw, 26px); font-weight: 700; letter-spacing: -0.3px; }
 
-    /* PREMIUM REFRESH BUTTON */
-    .btn-refresh {
-      border: 0;
-      background: rgba(255, 255, 255, 0.12);
+    /* PREMIUM HEADER ACTION BUTTONS */
+    .header-action-btn {
+      border: 0; 
+      background: rgba(255, 255, 255, 0.08); 
       color: white;
-      width: 36px;
-      height: 36px;
+      width: 38px; 
+      height: 38px; 
       border-radius: 10px;
-      display: grid;
+      display: grid; 
       place-items: center;
+      position: relative;
       transition: background 0.2s ease, transform 0.15s ease;
     }
 
-    .btn-refresh:active {
-      background: rgba(255, 255, 255, 0.25);
+    .header-action-btn:active {
+      background: rgba(255, 255, 255, 0.2);
       transform: scale(0.92);
     }
 
-    .btn-refresh.spinning svg {
-      animation: spin 0.8s linear infinite;
+    .icon-svg {
+      width: 18px;
+      height: 18px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
     }
 
-    @keyframes spin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
+    .icon-svg.spin {
+      animation: spinAnimation 0.8s linear infinite;
     }
 
-    .header-action-btn {
-      border: 0; background: transparent; color: white;
-      width: 36px; height: 36px; display: grid; place-items: center;
-      font-size: 18px; position: relative;
+    @keyframes spinAnimation {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
 
     .bell {
-      width: 20px; height: 20px; border: 2px solid white; border-radius: 12px 12px 8px 8px;
-      position: relative; border-bottom-width: 3px;
+      width: 18px; height: 18px; border: 2px solid white; border-radius: 10px 10px 6px 6px;
+      position: relative; border-bottom-width: 2.5px;
     }
 
-    .bell::before { content: ""; position: absolute; width: 6px; height: 2px; border-radius: 2px; background: white; left: 5px; bottom: -6px; }
+    .bell::before { content: ""; position: absolute; width: 5px; height: 2px; border-radius: 2px; background: white; left: 4.5px; bottom: -5px; }
 
     .notification-count {
-      position: absolute; top: -2px; right: -2px; min-width: 20px; height: 20px;
-      padding: 0 4px; border-radius: 10px; background: #ef2a2a; color: #fff;
-      font-size: clamp(9px, 2.5vw, 11px); font-weight: 700; display: grid; place-items: center; border: 2px solid var(--navy);
+      position: absolute; top: -3px; right: -3px; min-width: 18px; height: 18px;
+      padding: 0 4px; border-radius: 9px; background: #ef2a2a; color: #fff;
+      font-size: clamp(8px, 2.2vw, 10px); font-weight: 700; display: grid; place-items: center; border: 2px solid var(--navy);
     }
 
     /* MAIN CONTAINER */
@@ -305,30 +310,73 @@
       padding: 12px 14px;
       border-bottom: 1px solid var(--line);
       color: var(--text);
-      vertical-align: middle;
     }
 
     .service-table tr:last-child td { border-bottom: none; }
     .service-table tr:nth-child(even) { background: #f8fafc; }
 
-    /* PREMIUM TRASH DELETE BUTTON */
-    .btn-delete-icon {
+    /* PREMIUM TRASH ICON BUTTON */
+    .btn-trash-icon {
+      border: 0;
       background: #fef2f2;
-      border: 1px solid #fee2e2;
-      color: #ef4444;
+      color: #dc2626;
       width: 32px;
       height: 32px;
       border-radius: 8px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.15s ease;
+      display: grid;
+      place-items: center;
+      transition: background 0.15s ease, transform 0.1s ease;
     }
 
-    .btn-delete-icon:active {
-      background: #fee2e2;
+    .btn-trash-icon:active {
+      background: #fecaca;
       transform: scale(0.92);
+    }
+
+    .trash-svg {
+      width: 16px;
+      height: 16px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* TOAST NOTIFICATION POPUP */
+    #toastContainer {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 4000;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      pointer-events: none;
+    }
+
+    .toast {
+      background: #1e293b;
+      color: #ffffff;
+      padding: 10px 18px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      animation: toastIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transition: opacity 0.3s ease;
+    }
+
+    .toast.success { background: #15803d; }
+    .toast.error { background: #b91c1c; }
+
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(20px) scale(0.9); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
     /* ACTION SHEET */
@@ -435,6 +483,9 @@
     </div>
   </div>
 
+  <!-- TOAST CONTAINER -->
+  <div id="toastContainer"></div>
+
   <!-- APP HEADER -->
   <header class="app-header">
     <div class="header-inner">
@@ -446,10 +497,10 @@
       </div>
 
       <div class="header-right">
-        <!-- PREMIUM REFRESH BUTTON -->
-        <button class="btn-refresh" id="refreshBtn" onclick="triggerManualRefresh()" aria-label="Refresh Data" title="Refresh">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21.5 2v6h-6M2.13 15.57a10 10 0 1 0 0.57-8.38l5.67-5.67"/>
+        <!-- PREMIUM REFRESH BUTTON WITH ROTATING SVG -->
+        <button class="header-action-btn" id="refreshBtn" onclick="handleRefresh()" title="Refresh Data" aria-label="Refresh">
+          <svg class="icon-svg" id="refreshIcon" viewBox="0 0 24 24">
+            <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3L21.5 8M22 12.5a10 10 0 0 1-18.8 4.2L2.5 16"/>
           </svg>
         </button>
 
@@ -707,6 +758,25 @@
     let loadedServiceLogs = [];
     let activeSelectedVehicle = null;
 
+    /* TOAST NOTIFICATIONS */
+    function showToast(message, type = "normal") {
+      const container = document.getElementById("toastContainer");
+      const toast = document.createElement("div");
+      toast.className = `toast ${type}`;
+      
+      let icon = "ℹ️";
+      if (type === "success") icon = "✓";
+      if (type === "error") icon = "✕";
+
+      toast.innerHTML = `<span>${icon}</span> <span>${escapeHTML(message)}</span>`;
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.opacity = "0";
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
     /* SPLASH SCREEN LOGIC */
     let progress = 0;
     let progressInterval;
@@ -742,11 +812,12 @@
     }
 
     /* REFRESH FUNCTIONALITY */
-    async function triggerManualRefresh() {
-      const btn = document.getElementById("refreshBtn");
-      if (btn) btn.classList.add("spinning");
+    async function handleRefresh() {
+      const icon = document.getElementById("refreshIcon");
+      icon.classList.add("spin");
       await loadVehicles();
-      if (btn) btn.classList.remove("spinning");
+      icon.classList.remove("spin");
+      showToast("Data refreshed", "success");
     }
 
     /* MODALS & ACTION SHEET */
@@ -764,7 +835,7 @@
       const select = document.getElementById("log_vehicleId");
       select.innerHTML = "";
       if (loadedVehicles.length === 0) {
-        alert("Please add a vehicle first.");
+        showToast("Please add a vehicle first", "error");
         return;
       }
       loadedVehicles.forEach(v => {
@@ -817,6 +888,7 @@
       if (!activeSelectedVehicle) return;
       if (!confirm(`Are you sure you want to delete ${activeSelectedVehicle.RegNumber}?`)) return;
 
+      const deletedReg = activeSelectedVehicle.RegNumber;
       closeActionSheet();
       startProgress();
 
@@ -830,43 +902,32 @@
           })
         });
         await loadVehicles();
+        showToast(`${deletedReg} deleted`, "success");
       } catch (err) {
-        alert("Failed to delete vehicle: " + err.message);
+        showToast("Failed to delete vehicle", "error");
         finishProgress();
       }
     }
 
-    /* DELETE INDIVIDUAL SERVICE LOG ROW */
     async function deleteServiceLogRow(logId) {
-      if (!logId || logId === "undefined") {
-        alert("Cannot delete: Missing Log ID for this record.");
-        return;
-      }
-      if (!confirm("Are you sure you want to delete this service record?")) return;
-
+      if (!confirm("Delete this service record?")) return;
       startProgress();
 
       try {
-        const response = await fetch(API_URL, {
+        await fetch(API_URL, {
           method: "POST",
           body: JSON.stringify({
             action: "deleteServiceLog",
             LogID: logId
           })
         });
-
-        const result = await response.json();
-        if (result.status === "error") {
-          throw new Error(result.message || "Deletion failed on backend");
-        }
-
         await loadVehicles();
         if (activeSelectedVehicle) {
           openVehicleServiceLogs(activeSelectedVehicle);
         }
+        showToast("Service log deleted", "success");
       } catch (err) {
-        alert("Failed to delete service log: " + err.message);
-      } finally {
+        showToast("Failed to delete service log", "error");
         finishProgress();
       }
     }
@@ -1066,7 +1127,7 @@
         return;
       }
 
-      // SORT: Latest service date on top
+      // SORT: Latest service on top
       logs.sort((a, b) => {
         const dateA = parseSheetDate(a["Service Date"] || a.ServiceDate) || 0;
         const dateB = parseSheetDate(b["Service Date"] || b.ServiceDate) || 0;
@@ -1102,13 +1163,10 @@
             <td>${escapeHTML(log["Workshop Name"] || log.WorkshopName || "-")}</td>
             <td>${escapeHTML(log.Remarks || "-")}</td>
             <td style="text-align: center;">
-              <!-- PREMIUM TRASH ICON BUTTON -->
-              <button class="btn-delete-icon" onclick="deleteServiceLogRow('${escapeJS(logId)}')" title="Delete Record" aria-label="Delete">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <button class="btn-trash-icon" onclick="deleteServiceLogRow('${escapeJS(logId)}')" title="Delete Service Record">
+                <svg class="trash-svg" viewBox="0 0 24 24">
                   <polyline points="3 6 5 6 21 6"></polyline>
                   <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                  <line x1="10" y1="11" x2="10" y2="17"></line>
-                  <line x1="14" y1="11" x2="14" y2="17"></line>
                 </svg>
               </button>
             </td>
@@ -1158,6 +1216,7 @@
             <small>${escapeHTML(err.message)}</small>
           </div>
         `;
+        showToast("Error loading data", "error");
       } finally {
         finishProgress();
       }
@@ -1224,8 +1283,9 @@
         document.getElementById("addVehicleForm").reset();
         closeAddModal();
         await loadVehicles();
+        showToast(isEdit ? "Vehicle updated" : "Vehicle added", "success");
       } catch (err) {
-        alert("Failed to save vehicle: " + err.message);
+        showToast("Failed to save vehicle", "error");
       } finally {
         saveBtn.innerText = "Save Vehicle";
         saveBtn.disabled = false;
@@ -1261,16 +1321,17 @@
         document.getElementById("addServiceForm").reset();
         closeAddServiceModal();
         await loadVehicles();
+        showToast("Service log recorded", "success");
       } catch (err) {
-        alert("Failed to save service log: " + err.message);
+        showToast("Failed to save service log", "error");
       } finally {
         saveBtn.innerText = "Save Service Log";
         saveBtn.disabled = false;
       }
     });
 
-    function showNotifications() { alert("Vehicle reminders will appear here."); }
-    function toggleMenu() { alert("Menu coming soon."); }
+    function showNotifications() { showToast("No new notifications"); }
+    function toggleMenu() { showToast("Menu coming soon"); }
 
     function escapeHTML(value) {
       return String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
