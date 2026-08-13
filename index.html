@@ -294,7 +294,7 @@
       border-collapse: collapse;
       text-align: left;
       font-size: clamp(12px, 3vw, 14px);
-      min-width: 750px;
+      min-width: 800px;
     }
 
     .service-table th {
@@ -314,11 +314,16 @@
     .service-table tr:last-child td { border-bottom: none; }
     .service-table tr:nth-child(even) { background: #f8fafc; }
 
-    /* TRASH BUTTON */
-    .btn-trash-icon {
+    /* ACTION BUTTONS IN TABLE */
+    .table-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .btn-action-icon {
       border: 0;
-      background: #fef2f2;
-      color: #dc2626;
       width: 32px;
       height: 32px;
       border-radius: 8px;
@@ -327,12 +332,15 @@
       transition: background 0.15s ease, transform 0.1s ease;
     }
 
-    .btn-trash-icon:active {
-      background: #fecaca;
-      transform: scale(0.92);
-    }
+    .btn-action-icon:active { transform: scale(0.92); }
 
-    .trash-svg {
+    .btn-edit-icon { background: #eff6ff; color: #2563eb; }
+    .btn-edit-icon:active { background: #dbeafe; }
+
+    .btn-trash-icon { background: #fef2f2; color: #dc2626; }
+    .btn-trash-icon:active { background: #fecaca; }
+
+    .action-svg {
       width: 16px;
       height: 16px;
       fill: none;
@@ -474,7 +482,7 @@
   <!-- SPLASH OVERLAY -->
   <div id="splashScreen">
     <div class="splash-content">
-      <div class="splash-logo">🚗 AutoCare+</div>
+      <div class="splash-logo">🚗 CarCare+</div>
       <div class="progress-bar-bg">
         <div id="progressBar" class="progress-bar-fill"></div>
       </div>
@@ -492,7 +500,7 @@
         <button class="menu-btn" onclick="toggleMenu()" aria-label="Menu">
           <span></span><span></span><span></span>
         </button>
-        <div class="page-title" id="pageTitle">My Vehicles</div>
+        <div class="page-title" id="pageTitle">My Dashboard</div>
       </div>
 
       <div class="header-right">
@@ -516,7 +524,7 @@
     <section id="tab-home" class="tab-content active">
       <div class="dashboard-intro">
         <div>
-          <h1 class="intro-title">Hello! 👋</h1>
+          <h1 class="intro-title">Hello Gautam! 👋</h1>
           <p class="intro-subtitle">Here's an overview of your vehicles</p>
         </div>
 
@@ -583,8 +591,8 @@
   <div class="action-sheet-overlay" id="actionSheet">
     <div class="action-sheet">
       <div class="action-title" id="actionSheetTitle">Vehicle Options</div>
-      <button class="action-btn" onclick="handleEditFromSheet()">✏️ Edit Vehicle</button>
-      <button class="action-btn delete" onclick="handleDeleteFromSheet()">🗑️ Delete Vehicle</button>
+      <button class="action-btn" onclick="handleEditFromSheet()">✏️ Edit </button>
+      <button class="action-btn delete" onclick="handleDeleteFromSheet()">🗑️ Delete </button>
       <button class="action-btn cancel" onclick="closeActionSheet()">Cancel</button>
     </div>
   </div>
@@ -657,15 +665,17 @@
     </div>
   </div>
 
-  <!-- ADD SERVICE LOG MODAL -->
+  <!-- ADD/EDIT SERVICE LOG MODAL -->
   <div class="modal-overlay" id="addServiceModal">
     <div class="modal-card">
       <div class="modal-header">
-        <h3 class="modal-title">Record Service Log</h3>
+        <h3 class="modal-title" id="serviceModalTitle">Record Service Log</h3>
         <button class="btn-close" onclick="closeAddServiceModal()">✕</button>
       </div>
 
       <form id="addServiceForm">
+        <input type="hidden" id="log_id">
+
         <div class="form-group">
           <label>Choose Vehicle</label>
           <select id="log_vehicleId" required></select>
@@ -829,7 +839,7 @@
     }
     function closeAddModal() { document.getElementById("addModal").style.display = "none"; }
 
-    function openAddServiceModal() {
+    function openAddServiceModal(logToEdit = null) {
       const select = document.getElementById("log_vehicleId");
       select.innerHTML = "";
       if (loadedVehicles.length === 0) {
@@ -843,8 +853,27 @@
         select.appendChild(opt);
       });
 
-      document.getElementById("addServiceForm").reset();
-      document.getElementById("log_serviceDate").value = formatDateForInput(new Date());
+      if (logToEdit) {
+        document.getElementById("serviceModalTitle").innerText = "Edit Service Log";
+        document.getElementById("log_id").value = String(logToEdit["Log ID"] || logToEdit.LogID || "").replace("'", "").trim();
+        select.value = String(logToEdit.VehicleID || logToEdit["VehicleID"] || "").replace("'", "").trim();
+        document.getElementById("log_serviceDate").value = formatDateForInput(logToEdit["Service Date"] || logToEdit.ServiceDate);
+        document.getElementById("log_serviceType").value = logToEdit["Service Type"] || logToEdit.ServiceType || "General Service";
+        document.getElementById("log_odometer").value = logToEdit["Odometer Reading"] || logToEdit.OdometerReading || "";
+        document.getElementById("log_bill").value = logToEdit["Total Bill"] || logToEdit.TotalBill || "";
+        document.getElementById("log_work").value = logToEdit["Work Carried Out"] || logToEdit.WorkCarriedOut || "";
+        document.getElementById("log_workshop").value = logToEdit["Workshop Name"] || logToEdit.WorkshopName || "";
+        document.getElementById("log_remarks").value = logToEdit.Remarks || "";
+      } else {
+        document.getElementById("serviceModalTitle").innerText = "Record Service Log";
+        document.getElementById("addServiceForm").reset();
+        document.getElementById("log_id").value = "";
+        if (activeSelectedVehicle) {
+          select.value = String(activeSelectedVehicle.VehicleID || activeSelectedVehicle.RegNumber).replace("'", "").trim();
+        }
+        document.getElementById("log_serviceDate").value = formatDateForInput(new Date());
+      }
+
       document.getElementById("addServiceModal").style.display = "flex";
     }
 
@@ -904,6 +933,13 @@
       } catch (err) {
         showToast("Failed to delete vehicle", "error");
         finishProgress();
+      }
+    }
+
+    function editServiceLogRow(logId) {
+      const log = loadedServiceLogs.find(l => String(l["Log ID"] || l.LogID || "").replace("'", "").trim() === String(logId).trim());
+      if (log) {
+        openAddServiceModal(log);
       }
     }
 
@@ -1113,16 +1149,14 @@
       document.getElementById("selectedVehicleTitle").innerText = `${vehicleIcon(vehicle)} ${vehicle.RegNumber} - ${vehicle.Name || ""} (${vehicle.Model || ""})`;
 
       const container = document.getElementById("serviceLogsTableContainer");
-      
-      const targetVehicleId = String(vehicle.VehicleID || "").replace("'", "").trim();
+      const vId = String(vehicle.VehicleID || "").replace("'", "").trim();
       const targetRegNumber = String(vehicle.RegNumber || "").trim().toLowerCase();
 
-      // Flexible matching against VehicleID or RegNumber
       let logs = loadedServiceLogs.filter(log => {
         const logVId = String(log.VehicleID || log["VehicleID"] || "").replace("'", "").trim();
         const logReg = String(log["Registration Number"] || log.RegNumber || "").trim().toLowerCase();
         
-        return logVId === targetVehicleId || logVId.toLowerCase() === targetRegNumber || (logReg && logReg === targetRegNumber);
+        return logVId === vId || logVId.toLowerCase() === targetRegNumber || (logReg && logReg === targetRegNumber);
       });
 
       if (logs.length === 0) {
@@ -1130,7 +1164,6 @@
         return;
       }
 
-      // SORT: Latest service date on top
       logs.sort((a, b) => {
         const dateA = parseSheetDate(a["Service Date"] || a.ServiceDate) || 0;
         const dateB = parseSheetDate(b["Service Date"] || b.ServiceDate) || 0;
@@ -1165,13 +1198,21 @@
             <td>${log["Total Bill"] || log.TotalBill ? '₹' + escapeHTML(log["Total Bill"] || log.TotalBill) : '-'}</td>
             <td>${escapeHTML(log["Workshop Name"] || log.WorkshopName || "-")}</td>
             <td>${escapeHTML(log.Remarks || "-")}</td>
-            <td style="text-align: center;">
-              <button class="btn-trash-icon" onclick="deleteServiceLogRow('${escapeJS(logId)}')" title="Delete Service Record">
-                <svg class="trash-svg" viewBox="0 0 24 24">
-                  <polyline points="3 6 5 6 21 6"></polyline>
-                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                </svg>
-              </button>
+            <td>
+              <div class="table-actions">
+                <button class="btn-action-icon btn-edit-icon" onclick="editServiceLogRow('${escapeJS(logId)}')" title="Edit Service Record">
+                  <svg class="action-svg" viewBox="0 0 24 24">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                  </svg>
+                </button>
+                <button class="btn-action-icon btn-trash-icon" onclick="deleteServiceLogRow('${escapeJS(logId)}')" title="Delete Service Record">
+                  <svg class="action-svg" viewBox="0 0 24 24">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                  </svg>
+                </button>
+              </div>
             </td>
           </tr>
         `;
@@ -1295,16 +1336,19 @@
       }
     });
 
-    /* SUBMIT NEW SERVICE LOG */
+    /* SUBMIT (ADD OR EDIT) SERVICE LOG */
     document.getElementById("addServiceForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       const saveBtn = document.getElementById("saveLogBtn");
       saveBtn.innerText = "Saving...";
       saveBtn.disabled = true;
 
+      const existingLogId = document.getElementById("log_id").value;
+      const isEdit = Boolean(existingLogId);
+
       const payload = {
-        action: "addServiceLog",
-        LogID: "LOG-" + Date.now(),
+        action: isEdit ? "editServiceLog" : "addServiceLog",
+        LogID: String(existingLogId || ("LOG-" + Date.now())),
         VehicleID: String(document.getElementById("log_vehicleId").value),
         ServiceDate: document.getElementById("log_serviceDate").value,
         ServiceType: document.getElementById("log_serviceType").value,
@@ -1324,7 +1368,7 @@
         document.getElementById("addServiceForm").reset();
         closeAddServiceModal();
         await loadVehicles();
-        showToast("Service log recorded", "success");
+        showToast(isEdit ? "Service log updated" : "Service log recorded", "success");
       } catch (err) {
         showToast("Failed to save service log", "error");
       } finally {
