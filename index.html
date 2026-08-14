@@ -610,110 +610,111 @@
         </div>
       </div>
     </section>
-        <!-- REFUEL DATA MODAL -->
-    <div class="modal-overlay" id="addFuelModal">
-      <div class="modal-card">
-        <div class="modal-header">
-          <h3 class="modal-title">Enter Refuelling Data</h3>
-          <button class="btn-close" onclick="closeAddFuelModal()">✕</button>
-        </div>
-        <form id="addFuelForm" onsubmit="handleFuelSubmit(event)">
-          <div class="form-group">
-            <label>Select Vehicle</label>
-            <select id="fuel_vehicleId" required></select>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label>Refuelling Date</label>
-              <input type="date" id="fuel_date" required>
-            </div>
-            <div class="form-group">
-              <label>Company / Station</label>
-              <input type="text" id="fuel_company" placeholder="e.g. Indian Oil">
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label>Odometer Reading (Km)</label>
-              <input type="number" id="fuel_odometer" placeholder="e.g. 10450" required>
-            </div>
-            <div class="form-group">
-              <label>Fuel Rate (₹/L)</label>
-              <input type="number" step="0.01" id="fuel_rate" value="102.50" oninput="updateFuelCalc('rate')" required>
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label>Fuel Filled (Litres)</label>
-              <input type="number" step="0.01" id="fuel_litres" placeholder="0.00" oninput="updateFuelCalc('litres')" required>
-            </div>
-            <div class="form-group">
-              <label>Total Amount (₹)</label>
-              <input type="number" step="0.01" id="fuel_amount" placeholder="0.00" oninput="updateFuelCalc('amount')" required>
-            </div>
-          </div>
-          <button type="submit" class="btn-submit" id="saveFuelBtn">Save Refuelling</button>
-        </form>
+
+  </main>
+
+  <!-- REFUEL DATA MODAL -->
+  <div class="modal-overlay" id="addFuelModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Enter Refuelling Data</h3>
+        <button class="btn-close" onclick="closeAddFuelModal()">✕</button>
       </div>
-    </div>
-    
-    <!-- CHECK MILEAGE MODAL -->
-    <div class="modal-overlay" id="checkMileageModal">
-      <div class="modal-card">
-        <div class="modal-header">
-          <h3 class="modal-title">Check Vehicle Mileage</h3>
-          <button class="btn-close" onclick="closeCheckMileageModal()">✕</button>
-        </div>
+      <form id="addFuelForm" onsubmit="handleFuelSubmit(event)">
         <div class="form-group">
           <label>Select Vehicle</label>
-          <select id="mileage_vehicleId" onchange="onMileageVehicleChange()"></select>
+          <select id="fuel_vehicleId" required></select>
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label>Starting Odometer (Km)</label>
-            <input type="number" id="mileage_startOdo">
+            <label>Refuelling Date</label>
+            <input type="date" id="fuel_date" required>
           </div>
           <div class="form-group">
-            <label>Current Odometer (Km)</label>
-            <input type="number" id="mileage_currentOdo" placeholder="e.g. 10900">
+            <label>Company / Station</label>
+            <input type="text" id="fuel_company" placeholder="e.g. Indian Oil">
           </div>
         </div>
-        <button type="button" class="btn-submit" onclick="runMileageCheck()" style="background:#0d9488;">Calculate</button>
-    
-        <div id="mileageResults" style="margin-top:16px; display:none; background:#f0fdf4; padding:12px; border-radius:10px; border:1px solid #bbf7d0;">
-          <p style="margin:0 0 6px; font-weight:600;">Current Interval: <span id="res_currentMileage" style="color:#16a34a;">-</span></p>
-          <p style="margin:0; font-weight:600;">Overall Efficiency: <span id="res_overallMileage" style="color:#16a34a;">-</span></p>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Odometer Reading (Km)</label>
+            <input type="number" id="fuel_odometer" placeholder="e.g. 10450" required>
+          </div>
+          <div class="form-group">
+            <label>Fuel Rate (₹/L)</label>
+            <input type="number" step="0.01" id="fuel_rate" value="102.50" oninput="updateFuelCalc('rate')" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Fuel Filled (Litres)</label>
+            <input type="number" step="0.01" id="fuel_litres" placeholder="0.00" oninput="updateFuelCalc('litres')" required>
+          </div>
+          <div class="form-group">
+            <label>Total Amount (₹)</label>
+            <input type="number" step="0.01" id="fuel_amount" placeholder="0.00" oninput="updateFuelCalc('amount')" required>
+          </div>
+        </div>
+        <button type="submit" class="btn-submit" id="saveFuelBtn">Save Refuelling</button>
+      </form>
+    </div>
+  </div>
+  
+  <!-- CHECK MILEAGE MODAL -->
+  <div class="modal-overlay" id="checkMileageModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Check Vehicle Mileage</h3>
+        <button class="btn-close" onclick="closeCheckMileageModal()">✕</button>
+      </div>
+      <div class="form-group">
+        <label>Select Vehicle</label>
+        <select id="mileage_vehicleId" onchange="onMileageVehicleChange()"></select>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Starting Odometer (Km)</label>
+          <input type="number" id="mileage_startOdo">
+        </div>
+        <div class="form-group">
+          <label>Current Odometer (Km)</label>
+          <input type="number" id="mileage_currentOdo" placeholder="e.g. 10900">
         </div>
       </div>
-    </div>
-    
-    <!-- REFUELLING HISTORY MODAL -->
-    <div class="modal-overlay" id="fuelHistoryModal">
-      <div class="modal-card" style="max-width: 700px;">
-        <div class="modal-header">
-          <h3 class="modal-title">Refuelling History</h3>
-          <button class="btn-close" onclick="closeFuelHistoryModal()">✕</button>
-        </div>
-        <div class="table-container">
-          <table class="service-table">
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Log ID</th>
-                <th>Vehicle</th>
-                <th>Odometer</th>
-                <th>Fuel (L)</th>
-                <th>Cost (₹)</th>
-                <th>Efficiency</th>
-              </tr>
-            </thead>
-            <tbody id="fuelHistoryTableBody"></tbody>
-          </table>
-        </div>
+      <button type="button" class="btn-submit" onclick="runMileageCheck()" style="background:#0d9488;">Calculate</button>
+  
+      <div id="mileageResults" style="margin-top:16px; display:none; background:#f0fdf4; padding:12px; border-radius:10px; border:1px solid #bbf7d0;">
+        <p style="margin:0 0 6px; font-weight:600;">Current Interval: <span id="res_currentMileage" style="color:#16a34a;">-</span></p>
+        <p style="margin:0; font-weight:600;">Overall Efficiency: <span id="res_overallMileage" style="color:#16a34a;">-</span></p>
       </div>
     </div>
-
-  </main>
+  </div>
+  
+  <!-- REFUELLING HISTORY MODAL -->
+  <div class="modal-overlay" id="fuelHistoryModal">
+    <div class="modal-card" style="max-width: 700px;">
+      <div class="modal-header">
+        <h3 class="modal-title">Refuelling History</h3>
+        <button class="btn-close" onclick="closeFuelHistoryModal()">✕</button>
+      </div>
+      <div class="table-container">
+        <table class="service-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Log ID</th>
+              <th>Vehicle</th>
+              <th>Odometer</th>
+              <th>Fuel (L)</th>
+              <th>Cost (₹)</th>
+              <th>Efficiency</th>
+            </tr>
+          </thead>
+          <tbody id="fuelHistoryTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 
   <!-- ACTION SHEET OVERLAY -->
   <div class="action-sheet-overlay" id="actionSheet">
@@ -952,6 +953,7 @@
       const icon = document.getElementById("refreshIcon");
       icon.classList.add("spin");
       await loadVehicles();
+      await loadFuelData();
       icon.classList.remove("spin");
       showToast("Data refreshed", "success");
     }
@@ -1104,14 +1106,14 @@
     function switchTab(tabId, title, element) {
       document.querySelectorAll(".tab-content").forEach(tab => tab.classList.remove("active"));
       document.querySelectorAll(".nav-item").forEach(nav => nav.classList.remove("active"));
-    
+
       const selectedTab = document.getElementById("tab-" + tabId);
       if (selectedTab) selectedTab.classList.add("active");
       if (element) element.classList.add("active");
-    
+
       document.getElementById("pageTitle").innerText = title;
       window.scrollTo({ top: 0, behavior: "smooth" });
-    
+
       if (tabId === "service") {
         showServiceVehicleList();
       } else if (tabId === "fuel") {
@@ -1740,8 +1742,8 @@
     }
 
     loadVehicles().then(() => {
-    loadFuelData();
-  });
+      loadFuelData();
+    });
   </script>
 </body>
 </html>
