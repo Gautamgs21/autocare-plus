@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="theme-color" content="#10264d">
-  <title>AutoCare++</title>
+  <title>AutoCare+v1.0</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
   <style>
@@ -516,7 +516,7 @@
   <!-- SPLASH OVERLAY -->
   <div id="splashScreen">
     <div class="splash-content">
-      <div class="splash-logo">AutoCare+</div>
+      <div class="splash-logo">AutoCare+v1.0</div>
       <div class="progress-bar-bg">
         <div id="progressBar" class="progress-bar-fill"></div>
       </div>
@@ -930,18 +930,22 @@
     function handleEditFromSheet() {
       closeActionSheet();
       if (!activeSelectedVehicle) return;
-
+    
+      // Normalize Column J (VehicleType) value to match dropdown
+      const rawType = String(activeSelectedVehicle.VehicleType || "").toLowerCase();
+      const isTwoWheeler = rawType.includes("two") || rawType.includes("2") || rawType.includes("bike") || rawType.includes("scooter");
+    
       document.getElementById("add_vehicleId").value = activeSelectedVehicle.VehicleID || "";
       document.getElementById("add_name").value = activeSelectedVehicle.Name || "";
       document.getElementById("add_reg").value = activeSelectedVehicle.RegNumber || "";
-      document.getElementById("add_type").value = activeSelectedVehicle.VehicleType || "Four Wheeler";
+      document.getElementById("add_type").value = isTwoWheeler ? "Two Wheeler" : "Four Wheeler";
       document.getElementById("add_model").value = activeSelectedVehicle.Model || "";
       document.getElementById("add_year").value = activeSelectedVehicle.Year || "";
       document.getElementById("add_serviceDate").value = formatDateForInput(activeSelectedVehicle.NextServiceDate);
       document.getElementById("add_insuranceDate").value = formatDateForInput(activeSelectedVehicle.InsuranceExpiry);
       document.getElementById("add_pollutionDate").value = formatDateForInput(activeSelectedVehicle.PollutionExpiry);
       document.getElementById("add_reminders").value = activeSelectedVehicle.RemindersOn || "TRUE";
-
+    
       openAddModal(true);
     }
 
@@ -1074,38 +1078,25 @@
       return "good";
     }
 
-    /* VEHICLE ICON SWITCHING LOGIC */
+        /* VEHICLE ICON SWITCHING LOGIC */
     function vehicleIcon(vehicle) {
+      // Check Column J (VehicleType) from your sheet
       const type = String(vehicle.VehicleType || "").toLowerCase();
-      const name = String(vehicle.Name || "").toLowerCase();
-      const model = String(vehicle.Model || "").toLowerCase();
-      const reg = String(vehicle.RegNumber || "").toLowerCase();
     
-      const combinedText = `${type} ${name} ${model} ${reg}`;
-    
-      const isTwoWheeler = combinedText.includes("two") || 
-                           combinedText.includes("bike") || 
-                           combinedText.includes("scooter") || 
-                           combinedText.includes("motorcycle") || 
-                           combinedText.includes("bullet") || 
-                           combinedText.includes("classic") || 
-                           combinedText.includes("jupiter") || 
-                           combinedText.includes("activa") || 
-                           combinedText.includes("access") || 
-                           combinedText.includes("vespa") || 
-                           combinedText.includes("ntorq") || 
-                           combinedText.includes("dio") || 
-                           combinedText.includes("cheetak") || 
-                           combinedText.includes("pulsar") || 
-                           combinedText.includes("ktm") || 
-                           combinedText.includes("royal enfield");
-    
-      if (isTwoWheeler) {
-        // Sharp Motorcycle Icon
+      if (type.includes("two") || type.includes("2") || type.includes("bike") || type.includes("scooter") || type.includes("motorcycle")) {
         return `<i class="fa-solid fa-motorcycle"></i>`;
       }
     
-      // Sharp Car Icon
+      if (type.includes("four") || type.includes("4") || type.includes("car") || type.includes("suv")) {
+        return `<i class="fa-solid fa-car-side"></i>`;
+      }
+    
+      // Fallback check on Name/Model if Column J is empty
+      const extraDetails = `${vehicle.Name || ""} ${vehicle.Model || ""}`.toLowerCase();
+      if (extraDetails.includes("bike") || extraDetails.includes("scooter") || extraDetails.includes("activa") || extraDetails.includes("jupiter")) {
+        return `<i class="fa-solid fa-motorcycle"></i>`;
+      }
+    
       return `<i class="fa-solid fa-car-side"></i>`;
     }
 
