@@ -6,6 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="theme-color" content="#10264d">
   <title>AutoCare+</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
   <style>
     * {
@@ -368,6 +369,19 @@
       stroke-width: 2;
       stroke-linecap: round;
       stroke-linejoin: round;
+    }
+
+    .vehicle-icon {
+      width: clamp(48px, 12vw, 60px);
+      height: clamp(48px, 12vw, 60px);
+      border-radius: 14px;
+      background: #ebf3ff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: #1e40af;
+      font-size: 24px; /* Adjusts icon size */
     }
 
     /* TOAST NOTIFICATION */
@@ -1066,9 +1080,9 @@
       const name = String(vehicle.Name || "").toLowerCase();
       const model = String(vehicle.Model || "").toLowerCase();
       const reg = String(vehicle.RegNumber || "").toLowerCase();
-
+    
       const combinedText = `${type} ${name} ${model} ${reg}`;
-
+    
       const isTwoWheeler = combinedText.includes("two") || 
                            combinedText.includes("bike") || 
                            combinedText.includes("scooter") || 
@@ -1085,26 +1099,14 @@
                            combinedText.includes("pulsar") || 
                            combinedText.includes("ktm") || 
                            combinedText.includes("royal enfield");
-
+    
       if (isTwoWheeler) {
-        return `
-          <svg viewBox="0 0 24 24" width="28" height="28" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="5.5" cy="17.5" r="3"></circle>
-            <circle cx="18.5" cy="17.5" r="3"></circle>
-            <path d="M12 17.5h3.5l2-6.5h-4.5z"></path>
-            <path d="M8.5 17.5l2-9.5h3"></path>
-            <path d="M11 5.5h3.5"></path>
-          </svg>
-        `;
+        // Sharp Motorcycle Icon
+        return `<i class="fa-solid fa-motorcycle"></i>`;
       }
-
-      return `
-        <svg viewBox="0 0 24 24" width="28" height="28" xmlns="http://www.w3.org/2000/svg">
-          <path d="M5 17h14M3 11l2-4h14l2 4M3 11v6a1 1 0 0 0 1 1h1m12 0h1a1 1 0 0 0 1-1v-6M3 11h18"></path>
-          <circle cx="7.5" cy="14.5" r="1.5" fill="currentColor"></circle>
-          <circle cx="16.5" cy="14.5" r="1.5" fill="currentColor"></circle>
-        </svg>
-      `;
+    
+      // Sharp Car Icon
+      return `<i class="fa-solid fa-car-side"></i>`;
     }
 
     function statusHTML(status) {
