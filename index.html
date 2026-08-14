@@ -188,7 +188,7 @@
 
     .vehicle-top { padding: 14px 14px 10px 20px; display: flex; align-items: center; gap: 12px; }
 
-    /* VIBRANT VEHICLE ICON STYLING */
+    /* VEHICLE ICON STYLING */
     .vehicle-icon {
       width: clamp(48px, 12vw, 60px);
       height: clamp(48px, 12vw, 60px);
@@ -199,23 +199,11 @@
       justify-content: center;
       flex-shrink: 0;
       color: #1e40af;
-    }
-    
-    .vehicle-icon svg {
-      width: 28px;
-      height: 28px;
-      stroke: #1e40af;
-      stroke-width: 2;
-      fill: none;
-      stroke-linecap: round;
-      stroke-linejoin: round;
+      font-size: 24px;
     }
 
     .status-soon .vehicle-icon { background: #fef3c7; color: #b45309; }
-    .status-soon .vehicle-icon svg { stroke: #b45309; }
-
     .status-overdue .vehicle-icon { background: #fee2e2; color: #b91c1c; }
-    .status-overdue .vehicle-icon svg { stroke: #b91c1c; }
 
     .vehicle-info { min-width: 0; flex: 1; }
     .vehicle-reg { margin: 0; font-size: clamp(16px, 4.5vw, 22px); line-height: 1.1; font-weight: 750; }
@@ -369,19 +357,6 @@
       stroke-width: 2;
       stroke-linecap: round;
       stroke-linejoin: round;
-    }
-
-    .vehicle-icon {
-      width: clamp(48px, 12vw, 60px);
-      height: clamp(48px, 12vw, 60px);
-      border-radius: 14px;
-      background: #ebf3ff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      color: #1e40af;
-      font-size: 24px; /* Adjusts icon size */
     }
 
     /* TOAST NOTIFICATION */
@@ -931,8 +906,14 @@
       closeActionSheet();
       if (!activeSelectedVehicle) return;
     
-      // Normalize Column J (VehicleType) value to match dropdown
-      const rawType = String(activeSelectedVehicle.VehicleType || "").toLowerCase();
+      // Checks all possible casing for 'Vehicletype' / 'VehicleType' from sheet
+      const rawType = String(
+        activeSelectedVehicle.Vehicletype || 
+        activeSelectedVehicle.VehicleType || 
+        activeSelectedVehicle["Vehicle Type"] || 
+        activeSelectedVehicle["Vehicletype"] || ""
+      ).toLowerCase();
+
       const isTwoWheeler = rawType.includes("two") || rawType.includes("2") || rawType.includes("bike") || rawType.includes("scooter");
     
       document.getElementById("add_vehicleId").value = activeSelectedVehicle.VehicleID || "";
@@ -1078,10 +1059,15 @@
       return "good";
     }
 
-        /* VEHICLE ICON SWITCHING LOGIC */
+    /* VEHICLE ICON SWITCHING LOGIC */
     function vehicleIcon(vehicle) {
-      // Check Column J (VehicleType) from your sheet
-      const type = String(vehicle.VehicleType || "").toLowerCase();
+      // Checks Column J ('Vehicletype' or 'VehicleType') from Google Sheets
+      const type = String(
+        vehicle.Vehicletype || 
+        vehicle.VehicleType || 
+        vehicle["Vehicle Type"] || 
+        vehicle["Vehicletype"] || ""
+      ).toLowerCase();
     
       if (type.includes("two") || type.includes("2") || type.includes("bike") || type.includes("scooter") || type.includes("motorcycle")) {
         return `<i class="fa-solid fa-motorcycle"></i>`;
@@ -1091,9 +1077,9 @@
         return `<i class="fa-solid fa-car-side"></i>`;
       }
     
-      // Fallback check on Name/Model if Column J is empty
-      const extraDetails = `${vehicle.Name || ""} ${vehicle.Model || ""}`.toLowerCase();
-      if (extraDetails.includes("bike") || extraDetails.includes("scooter") || extraDetails.includes("activa") || extraDetails.includes("jupiter")) {
+      // Fallback check on Name / Model if Column J is empty
+      const extraDetails = `${vehicle.Name || ""} ${vehicle.Model || ""} ${vehicle.RegNumber || ""}`.toLowerCase();
+      if (extraDetails.includes("bike") || extraDetails.includes("scooter") || extraDetails.includes("activa") || extraDetails.includes("jupiter") || extraDetails.includes("bullet") || extraDetails.includes("access")) {
         return `<i class="fa-solid fa-motorcycle"></i>`;
       }
     
