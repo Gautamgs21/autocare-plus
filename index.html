@@ -1104,16 +1104,18 @@
     function switchTab(tabId, title, element) {
       document.querySelectorAll(".tab-content").forEach(tab => tab.classList.remove("active"));
       document.querySelectorAll(".nav-item").forEach(nav => nav.classList.remove("active"));
-
+    
       const selectedTab = document.getElementById("tab-" + tabId);
       if (selectedTab) selectedTab.classList.add("active");
       if (element) element.classList.add("active");
-
+    
       document.getElementById("pageTitle").innerText = title;
       window.scrollTo({ top: 0, behavior: "smooth" });
-
+    
       if (tabId === "service") {
         showServiceVehicleList();
+      } else if (tabId === "fuel") {
+        loadFuelData();
       }
     }
 
@@ -1737,7 +1739,9 @@
       return String(value).replace(/\\/g, "\\\\").replace(/'/g, "\\'");
     }
 
-    loadVehicles();
+    loadVehicles().then(() => {
+    loadFuelData();
+  });
   </script>
 </body>
 </html>
